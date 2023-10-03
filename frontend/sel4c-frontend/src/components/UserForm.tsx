@@ -30,7 +30,6 @@ export const UserForm: React.FC<Props> = ({ onClose, onSave }) => {
 
     return (
         <div>
-            <button onClick={onClose}>Cerrar</button>
             <h2>Añadir Usuario</h2>
             <form onSubmit={handleSubmit}>
                 <label>

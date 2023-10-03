@@ -110,7 +110,6 @@ export const UserTable: React.FC = () => {
                             <td>{user.institucion}</td>
                             <td>{user.grado_academico}</td>
                             <td>{user.pais}</td>
-                            {/* ... más celdas ... */}
                         </tr>
                     ))}
                 </tbody>
