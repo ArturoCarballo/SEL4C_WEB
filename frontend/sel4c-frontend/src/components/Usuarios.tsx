@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Usuario } from '../Usuario';
 import ListaUsuarios from './ListaUsuarios';
 
+
 const Usuarios: React.FC = () => {
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
 
