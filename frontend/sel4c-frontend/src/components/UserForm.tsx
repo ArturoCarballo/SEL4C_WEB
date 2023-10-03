@@ -90,7 +90,11 @@ export const UserForm: React.FC = () => {
                 <br />
                 <label>
                     Institución:
-                    <input type="text" name="institucion" value={user.institucion} onChange={handleChange} required />
+                    <select name="institucion" value={user.institucion} onChange={handleChange} required>
+                        <option value="" disabled>Seleccione</option>
+                        <option value="Tecnologico de Monterrey">Tecnologico de Monterrey</option>
+                        <option value="Otros">Otros</option>
+                    </select>
                 </label>
                 <br />
                 <label>
