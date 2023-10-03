@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { User } from '../interface/User';
+import { SortArrow } from './SortArrow';
 
 export const UserTable: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [sortedUsers, setSortedUsers] = useState<User[]>([]);
-    const [sortConfig, setSortConfig] = useState<{key: keyof User, direction: string} | null>(null);
+    const [sortConfig, setSortConfig] = useState<{ key: keyof User, direction: string } | null>(null);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -26,7 +27,7 @@ export const UserTable: React.FC = () => {
             sortedArray.sort((a: User, b: User) => {
                 const aValue = a[key];
                 const bValue = b[key];
-            
+
                 if (aValue != null && bValue != null) {
                     if (aValue < bValue) {
                         return direction === 'ascending' ? -1 : 1;
@@ -55,11 +56,34 @@ export const UserTable: React.FC = () => {
             <table>
                 <thead>
                     <tr>
-                        <th onClick={() => requestSort('nombre')}>Nombre</th>
-                        <th onClick={() => requestSort('apellido')}>Apellido</th>
-                        <th onClick={() => requestSort('email')}>Email</th>
-                        <th onClick={() => requestSort('edad')}>Edad</th>
-                        {/* ... más encabezados de columna ... */}
+                        <th onClick={() => requestSort('nombre')}>
+                            Nombre {sortConfig?.key === 'nombre' && <SortArrow direction={sortConfig.direction} />}
+                        </th>
+                        <th onClick={() => requestSort('apellido')}>
+                            Apellido {sortConfig?.key === 'apellido' && <SortArrow direction={sortConfig.direction} />}
+                        </th>
+                        <th onClick={() => requestSort('email')}>
+                            Email {sortConfig?.key === 'email' && <SortArrow direction={sortConfig.direction} />}
+                        </th>
+                        <th onClick={() => requestSort('edad')}>
+                            Edad {sortConfig?.key === 'edad' && <SortArrow direction={sortConfig.direction} />}
+                        </th>
+                        <th onClick={() => requestSort('sexo')}>
+                            Sexo {sortConfig?.key === 'sexo' && <SortArrow direction={sortConfig.direction} />}
+                        </th>
+                        <th onClick={() => requestSort('disciplina')}>
+                            Disciplina {sortConfig?.key === 'disciplina' && <SortArrow direction={sortConfig.direction} />}
+                        </th>
+                        <th onClick={() => requestSort('institucion')}>
+                            Institucion {sortConfig?.key === 'institucion' && <SortArrow direction={sortConfig.direction} />}
+                        </th>
+                        <th onClick={() => requestSort('grado_academico')}>
+                            Grado Academico {sortConfig?.key === 'grado_academico' && <SortArrow direction={sortConfig.direction} />}
+                        </th>
+                        <th onClick={() => requestSort('pais')}>
+                            Pais {sortConfig?.key === 'pais' && <SortArrow direction={sortConfig.direction} />}
+                        </th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -69,6 +93,11 @@ export const UserTable: React.FC = () => {
                             <td>{user.apellido}</td>
                             <td>{user.email}</td>
                             <td>{user.edad}</td>
+                            <td>{user.sexo}</td>
+                            <td>{user.disciplina}</td>
+                            <td>{user.institucion}</td>
+                            <td>{user.grado_academico}</td>
+                            <td>{user.pais}</td>
                             {/* ... más celdas ... */}
                         </tr>
                     ))}
