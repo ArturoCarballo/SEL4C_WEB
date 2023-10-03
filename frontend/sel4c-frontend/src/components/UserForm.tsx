@@ -80,7 +80,12 @@ export const UserForm: React.FC = () => {
                 <br />
                 <label>
                     Grado Académico:
-                    <input type="text" name="grado_academico" value={user.grado_academico} onChange={handleChange} required />
+                    <select name="grado_academico" value={user.grado_academico} onChange={handleChange} required>
+                        <option value="" disabled>Seleccione</option>
+                        <option value="Pregrado">Pregrado</option>
+                        <option value="Posgrado">Posgrado</option>
+                        <option value="Educacion continua">Educacion continua</option>
+                    </select>
                 </label>
                 <br />
                 <label>
@@ -95,7 +100,15 @@ export const UserForm: React.FC = () => {
                 <br />
                 <label>
                     Disciplina:
-                    <input type="text" name="disciplina" value={user.disciplina} onChange={handleChange} required />
+                    <select name="disciplina" value={user.disciplina} onChange={handleChange} required>
+                        <option value="" disabled>Seleccione</option>
+                        <option value="Ingenieria Y Ciencias">Ingenieria Y Ciencias</option>
+                        <option value="Humanidades y Educacion">Humanidades y Educacion</option>
+                        <option value="Ciencias Sociales">Ciencias Sociales</option>
+                        <option value="Ciencias de la Salud">Ciencias de la Salud</option>
+                        <option value="Arquitectura Arte y Diseño">Arquitectura Arte y Diseño</option>
+                        <option value="Negocios">Negocios</option>
+                    </select>
                 </label>
                 <br />
                 <button type="submit">Añadir Usuario</button>
