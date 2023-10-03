@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { User } from '../interface/User';
 import { SortArrow } from './SortArrow';
-import { UserForm } from './UserForm';
+import { UserFormModal } from './UserFormModal';
 
 export const UserTable: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -60,7 +60,11 @@ export const UserTable: React.FC = () => {
         <div>
             <h2>Usuarios</h2>
             <button onClick={() => setIsAddingUser(true)}>Añadir Usuario</button>
-            {isAddingUser && <UserForm onClose={() => setIsAddingUser(false)} onSave={handleAddUser} />}
+            <UserFormModal 
+                isOpen={isAddingUser} 
+                onClose={() => setIsAddingUser(false)} 
+                onSave={handleAddUser} 
+            />
             <table>
                 <thead>
                     <tr>
