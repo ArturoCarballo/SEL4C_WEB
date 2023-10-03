@@ -1,14 +1,18 @@
 import React from 'react';
 import { UserTable } from './components/UserTable';
-import { UserForm } from './components/UserForm';
+import './App.css';
 
-function App() {
-    return (
-        <div className="App">
-            <UserForm />
-            <UserTable />
-        </div>
-    );
+const App: React.FC = () => {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Mi Aplicación</h1>
+      </header>
+      <main>
+        <UserTable />
+      </main>
+    </div>
+  );
 }
 
 export default App;

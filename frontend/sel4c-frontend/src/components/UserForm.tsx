@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { User } from '../interface/User';
 
-export const UserForm: React.FC = () => {
+interface Props {
+    onClose: () => void;
+    onSave: (user: User) => void;
+}
+
+export const UserForm: React.FC<Props> = ({ onClose, onSave }) => {
     const [user, setUser] = useState<User>({
         apellido: '',
         disciplina: '',
@@ -20,33 +25,12 @@ export const UserForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            await fetch('/api/usuarios', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            });
-            alert("Usuario añadido con éxito");
-            setUser({
-                apellido: '',
-                disciplina: '',
-                email: '',
-                edad: 0,
-                sexo: '',
-                grado_academico: '',
-                institucion: '',
-                nombre: '',
-                pais: ''
-            });
-        } catch (error) {
-            console.error("Error adding user: ", error);
-        }
+        onSave(user);
     };
 
     return (
         <div>
+            <button onClick={onClose}>Cerrar</button>
             <h2>Añadir Usuario</h2>
             <form onSubmit={handleSubmit}>
                 <label>

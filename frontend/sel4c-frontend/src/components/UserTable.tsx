@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { User } from '../interface/User';
 import { SortArrow } from './SortArrow';
+import { UserForm } from './UserForm';
 
 export const UserTable: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [sortedUsers, setSortedUsers] = useState<User[]>([]);
     const [sortConfig, setSortConfig] = useState<{ key: keyof User, direction: string } | null>(null);
+    const [isAddingUser, setIsAddingUser] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -23,7 +25,7 @@ export const UserTable: React.FC = () => {
     useEffect(() => {
         let sortedArray = [...users];
         if (sortConfig !== null) {
-            const { key, direction } = sortConfig; // Extraemos key y direction aquí
+            const { key, direction } = sortConfig;
             sortedArray.sort((a: User, b: User) => {
                 const aValue = a[key];
                 const bValue = b[key];
@@ -50,9 +52,15 @@ export const UserTable: React.FC = () => {
         setSortConfig({ key, direction });
     };
 
+    const handleAddUser = (user: User) => {
+        setIsAddingUser(false);
+    }
+
     return (
         <div>
             <h2>Usuarios</h2>
+            <button onClick={() => setIsAddingUser(true)}>Añadir Usuario</button>
+            {isAddingUser && <UserForm onClose={() => setIsAddingUser(false)} onSave={handleAddUser} />}
             <table>
                 <thead>
                     <tr>
