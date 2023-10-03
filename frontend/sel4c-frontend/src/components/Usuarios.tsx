@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Usuario } from '../Usuario';
+import ListaUsuarios from './ListaUsuarios';
 
 const Usuarios: React.FC = () => {
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
@@ -55,9 +56,11 @@ const Usuarios: React.FC = () => {
 
     return (
         <div>
-          {/* Renderizar usuarios y formularios para agregar/actualizar/eliminar usuarios */}
+            <h1>Usuarios</h1>
+            <ListaUsuarios usuarios={usuarios} eliminarUsuario={eliminarUsuario} />
+            {/* Aquí también puedes renderizar FormularioUsuario y pasarle agregarUsuario/actualizarUsuario según sea necesario */}
         </div>
-      );
+    );
 };
 
 export default Usuarios;
