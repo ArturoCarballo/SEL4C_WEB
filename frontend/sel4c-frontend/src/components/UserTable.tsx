@@ -7,7 +7,9 @@ export const UserTable: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [sortedUsers, setSortedUsers] = useState<User[]>([]);
     const [sortConfig, setSortConfig] = useState<{ key: keyof User, direction: string } | null>(null);
+
     const [isAddingUser, setIsAddingUser] = useState(false);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -52,19 +54,47 @@ export const UserTable: React.FC = () => {
         setSortConfig({ key, direction });
     };
 
+    const deleteUser = async (id: number) => {
+        const shouldDelete = window.confirm('¿Estás seguro de que quieres eliminar este usuario?');
+        if (shouldDelete) {
+            // Lógica para eliminar el usuario mediante API.
+            try {
+                await fetch(`/api/usuarios/${id}`, {
+                    method: 'DELETE',
+                });
+                setUsers(users.filter(user => user.id !== id)); // Actualiza la lista de usuarios en el estado.
+            } catch (error) {
+                console.error("Error deleting user: ", error);
+            }
+        }
+    };
+
     const handleAddUser = (user: User) => {
         setIsAddingUser(false);
     }
+
+    const handleEditUser = (user: User) => {
+        setEditingUser(null);
+    };
 
     return (
         <div>
             <h2>Usuarios</h2>
             <button onClick={() => setIsAddingUser(true)}>Añadir Usuario</button>
-            <UserFormModal 
-                isOpen={isAddingUser} 
-                onClose={() => setIsAddingUser(false)} 
-                onSave={handleAddUser} 
+            <UserFormModal
+                isOpen={isAddingUser}
+                onClose={() => setIsAddingUser(false)}
+                onSave={handleAddUser}
             />
+
+            {editingUser && (
+                <UserFormModal
+                    isOpen={true}
+                    onClose={() => setEditingUser(null)}
+                    onSave={handleEditUser}
+                    initialData={editingUser} // Pasamos el usuario a editar como prop al modal
+                />
+            )}
             <table>
                 <thead>
                     <tr>
@@ -110,6 +140,18 @@ export const UserTable: React.FC = () => {
                             <td>{user.institucion}</td>
                             <td>{user.grado_academico}</td>
                             <td>{user.pais}</td>
+                            <td>
+                                <i 
+                                    className="fa fa-pencil"
+                                    style={{cursor: "pointer", marginRight: "10px"}}
+                                    onClick={() => setEditingUser(user)}
+                                />
+                                <i 
+                                    className="fa fa-trash"
+                                    style={{cursor: "pointer"}}
+                                    onClick={() => deleteUser(user.id)}
+                                />
+                            </td>
                         </tr>
                     ))}
                 </tbody>

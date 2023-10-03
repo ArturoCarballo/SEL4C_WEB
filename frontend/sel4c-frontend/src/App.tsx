@@ -6,7 +6,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Mi Aplicación</h1>
+        <h1>SEL4C</h1>
       </header>
       <main>
         <UserTable />
