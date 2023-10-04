@@ -3,16 +3,26 @@ import { User } from "../interface/User";
 const API_BASE = "/api/usuarios";
 
 export const fetchUsers = async (): Promise<User[]> => {
-    const response = await fetch(API_BASE);
+    const token = localStorage.getItem("admin_token");
+
+    const response = await fetch(API_BASE, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+        }
+    });
     if (!response.ok) throw new Error('Error fetching users');
     return response.json();
 }
 
 export const addUser = async (user: User): Promise<User> => {
+    const token = localStorage.getItem("admin_token");
+
     const response = await fetch(API_BASE, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
         },
         body: JSON.stringify(user)
     });
@@ -21,10 +31,13 @@ export const addUser = async (user: User): Promise<User> => {
 }
 
 export const updateUser = async (user: User): Promise<User> => {
+    const token = localStorage.getItem("admin_token");
+
     const response = await fetch(`${API_BASE}/${user.id}`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
         },
         body: JSON.stringify(user)
     });
@@ -33,8 +46,14 @@ export const updateUser = async (user: User): Promise<User> => {
 }
 
 export const deleteUser = async (id: number): Promise<void> => {
+    const token = localStorage.getItem("admin_token");
+    
     const response = await fetch(`${API_BASE}/${id}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+        }
     });
     if (!response.ok) throw new Error('Error deleting user');
 }

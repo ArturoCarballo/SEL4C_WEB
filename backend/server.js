@@ -1,5 +1,11 @@
 const express = require('express');
 const mysql = require('mysql2/promise');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+
+const saltRounds = 10;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,11 +20,29 @@ const dbConfig = {
 
 const pool = mysql.createPool(dbConfig);
 
+// Middleware para proteger rutas
+function authMiddleware(req, res, next) {
+  const token = req.headers['authorization'].split(" ")[1];;
+
+  if (!token) {
+      return res.status(403).json({ message: 'No token provided.' });
+  }
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+      if (err) {
+          return res.status(500).json({ message: 'Failed to authenticate token.' });
+      }
+      req.userId = decoded.id;
+      next();
+  });
+}
+
 // Middleware para parsear el cuerpo de las solicitudes JSON
 app.use(express.json());
 
+
 // Endpoint para obtener todos los alumnos
-app.get('/api/usuarios', async (req, res, next) => {
+app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM usuario');
     res.json(rows);
@@ -28,7 +52,7 @@ app.get('/api/usuarios', async (req, res, next) => {
 });
 
 // Endpoint para añadir un nuevo usuario
-app.post('/api/usuarios', async (req, res, next) => {
+app.post('/api/usuarios', authMiddleware, async (req, res, next) => {
   const {apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais} = req.body;
   try {
     const [result] = await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais]);
@@ -39,7 +63,7 @@ app.post('/api/usuarios', async (req, res, next) => {
 });
 
 // Endpoint para actualizar un usuario
-app.put('/api/usuarios/:id', async (req, res, next) => {
+app.put('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
   const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais } = req.body;
   try {
@@ -57,7 +81,7 @@ app.put('/api/usuarios/:id', async (req, res, next) => {
 });
 
 // Endpoint para eliminar un usuario
-app.delete('/api/usuarios/:id', async (req, res, next) => {
+app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
   try {
     await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
@@ -65,6 +89,29 @@ app.delete('/api/usuarios/:id', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+// Endpoint para iniciar sesion como admin
+app.post('/api/admin/login', async (req, res, next) => {
+  const { username, password } = req.body;
+
+  // Verifica el usuario y la contraseña
+  const [admin] = await pool.execute('SELECT * FROM admin WHERE username = ?', [username]);
+
+  if (!admin || !bcrypt.compareSync(password, admin[0].password)) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  // Genera un token JWT
+  const token = jwt.sign({ id: admin[0].id }, process.env.SECRET_KEY, {
+      expiresIn: 86400 // 24 horas
+  });
+  res.json({ auth: true, token: token });
+});
+
+// Endpoint para logout
+app.get('/api/admin/logout', (req, res) => {
+  res.status(200).send({ auth: false, token: null });
 });
 
 // Middleware para manejar errores

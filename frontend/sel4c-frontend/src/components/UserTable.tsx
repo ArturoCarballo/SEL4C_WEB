@@ -7,6 +7,7 @@ import { fetchUsers, addUser, updateUser, deleteUser } from '../services/User.se
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import LogoutButton from './LogoutButton';
 
 export const UserTable: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -17,17 +18,17 @@ export const UserTable: React.FC = () => {
     const [editingUser, setEditingUser] = useState<User | null>(null);
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const loadUsers = async () => {
             try {
-                const response = await fetch('/api/usuarios');
-                const data = await response.json();
-                setUsers(data);
+                const usersList = await fetchUsers();
+                setUsers(usersList);
             } catch (error) {
                 console.error("Error fetching users: ", error);
             }
         };
-        fetchUsers();
+        loadUsers();
     }, []);
+    
 
     useEffect(() => {
         let sortedArray = [...users];
@@ -232,6 +233,7 @@ export const UserTable: React.FC = () => {
                     ))}
                 </TableBody>
             </Table>
+            <LogoutButton></LogoutButton>
         </div>
     );
 }

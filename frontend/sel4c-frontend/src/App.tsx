@@ -1,18 +1,18 @@
-import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute';
+import Login from './pages/Login/Login';
 import { UserTable } from './components/UserTable';
-import './App.css';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>SEL4C</h1>
-      </header>
-      <main>
-        <UserTable />
-      </main>
-    </div>
-  );
+function App() {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/users" element={<PrivateRoute component={UserTable} />} />
+                <Route path="*" element={<Navigate to="/login" />} /> 
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
