@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { User } from '../interface/User';
-import { SortArrow } from './SortArrow';
 import { UserFormModal } from './UserFormModal';
+
+import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Button } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const UserTable: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -34,10 +37,10 @@ export const UserTable: React.FC = () => {
 
                 if (aValue != null && bValue != null) {
                     if (aValue < bValue) {
-                        return direction === 'ascending' ? -1 : 1;
+                        return direction === 'asc' ? -1 : 1;
                     }
                     if (aValue > bValue) {
-                        return direction === 'ascending' ? 1 : -1;
+                        return direction === 'asc' ? 1 : -1;
                     }
                 }
                 return 0;
@@ -47,9 +50,9 @@ export const UserTable: React.FC = () => {
     }, [users, sortConfig]);
 
     const requestSort = (key: keyof User) => {
-        let direction = 'ascending';
-        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-            direction = 'descending';
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
         }
         setSortConfig({ key, direction });
     };
@@ -69,18 +72,61 @@ export const UserTable: React.FC = () => {
         }
     };
 
-    const handleAddUser = (user: User) => {
-        setIsAddingUser(false);
-    }
-
-    const handleEditUser = (user: User) => {
-        setEditingUser(null);
+    const handleAddUser = async (user: User): Promise<Response> => {
+        try {
+            const response = await fetch('/api/usuarios', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Failed to save user: ${await response.text()}`);
+            }
+    
+            return response;
+        } catch (error) {
+            console.error("Error adding user: ", error);
+            throw error; // Lanza el error en lugar de devolver un valor
+        }
     };
+    
+    
+
+    const handleEditUser = async (user: User): Promise<Response> => {
+        try {
+            const response = await fetch(`/api/usuarios/${user.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            });
+            
+            if(response.ok) {
+                // Si la respuesta es exitosa, actualizamos el estado del usuario basándonos en el usuario que enviamos.
+                setUsers(prevUsers => prevUsers.map(u => u.id === user.id ? user : u));
+            } else {
+                throw new Error(`Failed to edit user: ${await response.text()}`);
+            }
+            
+    
+            return response; // Asegúrate de devolver la respuesta aquí
+        } catch (error) {
+            console.error("Error updating user: ", error);
+            throw error;
+        }
+    };
+    
 
     return (
         <div>
             <h2>Usuarios</h2>
-            <button onClick={() => setIsAddingUser(true)}>Añadir Usuario</button>
+            <Button variant="contained" color="primary" onClick={() => setIsAddingUser(true)}>
+                Añadir Usuario
+            </Button>
             <UserFormModal
                 isOpen={isAddingUser}
                 onClose={() => setIsAddingUser(false)}
@@ -92,70 +138,124 @@ export const UserTable: React.FC = () => {
                     isOpen={true}
                     onClose={() => setEditingUser(null)}
                     onSave={handleEditUser}
-                    initialData={editingUser} // Pasamos el usuario a editar como prop al modal
+                    initialData={editingUser}
                 />
             )}
-            <table>
-                <thead>
-                    <tr>
-                        <th onClick={() => requestSort('nombre')}>
-                            Nombre {sortConfig?.key === 'nombre' && <SortArrow direction={sortConfig.direction} />}
-                        </th>
-                        <th onClick={() => requestSort('apellido')}>
-                            Apellido {sortConfig?.key === 'apellido' && <SortArrow direction={sortConfig.direction} />}
-                        </th>
-                        <th onClick={() => requestSort('email')}>
-                            Email {sortConfig?.key === 'email' && <SortArrow direction={sortConfig.direction} />}
-                        </th>
-                        <th onClick={() => requestSort('edad')}>
-                            Edad {sortConfig?.key === 'edad' && <SortArrow direction={sortConfig.direction} />}
-                        </th>
-                        <th onClick={() => requestSort('sexo')}>
-                            Sexo {sortConfig?.key === 'sexo' && <SortArrow direction={sortConfig.direction} />}
-                        </th>
-                        <th onClick={() => requestSort('disciplina')}>
-                            Disciplina {sortConfig?.key === 'disciplina' && <SortArrow direction={sortConfig.direction} />}
-                        </th>
-                        <th onClick={() => requestSort('institucion')}>
-                            Institucion {sortConfig?.key === 'institucion' && <SortArrow direction={sortConfig.direction} />}
-                        </th>
-                        <th onClick={() => requestSort('grado_academico')}>
-                            Grado Academico {sortConfig?.key === 'grado_academico' && <SortArrow direction={sortConfig.direction} />}
-                        </th>
-                        <th onClick={() => requestSort('pais')}>
-                            Pais {sortConfig?.key === 'pais' && <SortArrow direction={sortConfig.direction} />}
-                        </th>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortConfig?.key === 'nombre'}
+                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
+                                onClick={() => requestSort('nombre')}
+                            >
+                                Nombre
+                            </TableSortLabel>
+                        </TableCell>
 
-                    </tr>
-                </thead>
-                <tbody>
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortConfig?.key === 'apellido'}
+                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
+                                onClick={() => requestSort('apellido')}
+                            >
+                                Apellido
+                            </TableSortLabel>
+                        </TableCell>
+
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortConfig?.key === 'email'}
+                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
+                                onClick={() => requestSort('email')}
+                            >
+                                Email
+                            </TableSortLabel>
+                        </TableCell>
+
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortConfig?.key === 'edad'}
+                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
+                                onClick={() => requestSort('edad')}
+                            >
+                                Edad
+                            </TableSortLabel>
+                        </TableCell>
+
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortConfig?.key === 'sexo'}
+                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
+                                onClick={() => requestSort('sexo')}
+                            >
+                                Sexo
+                            </TableSortLabel>
+                        </TableCell>
+
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortConfig?.key === 'disciplina'}
+                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
+                                onClick={() => requestSort('disciplina')}
+                            >
+                                Disciplina
+                            </TableSortLabel>
+                        </TableCell>
+
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortConfig?.key === 'grado_academico'}
+                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
+                                onClick={() => requestSort('grado_academico')}
+                            >
+                                Grado Academico
+                            </TableSortLabel>
+                        </TableCell> 
+
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortConfig?.key === 'institucion'}
+                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
+                                onClick={() => requestSort('institucion')}
+                            >
+                                Institucion
+                            </TableSortLabel>
+                        </TableCell>
+
+                        <TableCell>
+                            <TableSortLabel
+                                active={sortConfig?.key === 'pais'}
+                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
+                                onClick={() => requestSort('pais')}
+                            >
+                                Pais
+                            </TableSortLabel>
+                        </TableCell>
+                        <TableCell>Acciones</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {sortedUsers.map((user) => (
-                        <tr key={user.id}>
-                            <td>{user.nombre}</td>
-                            <td>{user.apellido}</td>
-                            <td>{user.email}</td>
-                            <td>{user.edad}</td>
-                            <td>{user.sexo}</td>
-                            <td>{user.disciplina}</td>
-                            <td>{user.institucion}</td>
-                            <td>{user.grado_academico}</td>
-                            <td>{user.pais}</td>
-                            <td>
-                                <i 
-                                    className="fa fa-pencil"
-                                    style={{cursor: "pointer", marginRight: "10px"}}
-                                    onClick={() => setEditingUser(user)}
-                                />
-                                <i 
-                                    className="fa fa-trash"
-                                    style={{cursor: "pointer"}}
-                                    onClick={() => deleteUser(user.id)}
-                                />
-                            </td>
-                        </tr>
+                        <TableRow key={user.id}>
+                            <TableCell>{user.nombre}</TableCell>
+                            <TableCell>{user.apellido}</TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell>{user.edad}</TableCell>
+                            <TableCell>{user.sexo}</TableCell>
+                            <TableCell>{user.disciplina}</TableCell>
+                            <TableCell>{user.grado_academico}</TableCell>
+                            <TableCell>{user.institucion}</TableCell>
+                            <TableCell>{user.pais}</TableCell>
+                            <TableCell>
+                                <EditIcon onClick={() => setEditingUser(user)} style={{cursor: 'pointer', marginRight: '10px'}} />
+                                <DeleteIcon onClick={() => deleteUser(user.id!)} style={{cursor: 'pointer'}} />
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
         </div>
     );
 }

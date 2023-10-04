@@ -31,8 +31,8 @@ app.get('/api/usuarios', async (req, res, next) => {
 app.post('/api/usuarios', async (req, res, next) => {
   const {apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais} = req.body;
   try {
-    await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais]);
-    res.status(201).send();
+    const [result] = await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais]);
+    res.status(201).json({ id: result.insertId });
   } catch (error) {
     next(error);
   }
