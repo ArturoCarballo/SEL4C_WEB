@@ -3,6 +3,8 @@ import { User } from '../interface/User';
 import { UserFormModal } from './UserFormModal';
 
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Button } from '@mui/material';
+import { fetchUsers, addUser, updateUser, deleteUser } from '../services/User.services';
+
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -57,63 +59,37 @@ export const UserTable: React.FC = () => {
         setSortConfig({ key, direction });
     };
 
-    const deleteUser = async (id: number) => {
+    const handleDeleteUser = async (id: number) => {
         const shouldDelete = window.confirm('¿Estás seguro de que quieres eliminar este usuario?');
         if (shouldDelete) {
-            // Lógica para eliminar el usuario mediante API.
             try {
-                await fetch(`/api/usuarios/${id}`, {
-                    method: 'DELETE',
-                });
-                setUsers(users.filter(user => user.id !== id)); // Actualiza la lista de usuarios en el estado.
+                await deleteUser(id);
+                setUsers(prevUsers => prevUsers.filter(user => user.id !== id)); // Actualiza la lista de usuarios en el estado.
             } catch (error) {
                 console.error("Error deleting user: ", error);
             }
         }
     };
 
-    const handleAddUser = async (user: User): Promise<Response> => {
+    const handleAddUser = async (user: User) => {
         try {
-            const response = await fetch('/api/usuarios', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            });
-    
-            if (!response.ok) {
-                throw new Error(`Failed to save user: ${await response.text()}`);
-            }
-    
-            return response;
+            const newUser = await addUser(user);
+            const updatedUsers = await fetchUsers();
+            setUsers(updatedUsers); 
+            return newUser;
         } catch (error) {
             console.error("Error adding user: ", error);
-            throw error; // Lanza el error en lugar de devolver un valor
+            throw error;
         }
     };
     
     
 
-    const handleEditUser = async (user: User): Promise<Response> => {
+    const handleEditUser = async (user: User) => {
         try {
-            const response = await fetch(`/api/usuarios/${user.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            });
-            
-            if(response.ok) {
-                // Si la respuesta es exitosa, actualizamos el estado del usuario basándonos en el usuario que enviamos.
-                setUsers(prevUsers => prevUsers.map(u => u.id === user.id ? user : u));
-            } else {
-                throw new Error(`Failed to edit user: ${await response.text()}`);
-            }
-            
-    
-            return response; // Asegúrate de devolver la respuesta aquí
+            const updatedUser = await updateUser(user);
+            setUsers(prevUsers => prevUsers.map(u => u.id === user.id ? updatedUser : u));
+            return updatedUser;
         } catch (error) {
             console.error("Error updating user: ", error);
             throw error;
@@ -250,7 +226,7 @@ export const UserTable: React.FC = () => {
                             <TableCell>{user.pais}</TableCell>
                             <TableCell>
                                 <EditIcon onClick={() => setEditingUser(user)} style={{cursor: 'pointer', marginRight: '10px'}} />
-                                <DeleteIcon onClick={() => deleteUser(user.id!)} style={{cursor: 'pointer'}} />
+                                <DeleteIcon onClick={() => handleDeleteUser(user.id!)} style={{cursor: 'pointer'}} />
                             </TableCell>
                         </TableRow>
                     ))}

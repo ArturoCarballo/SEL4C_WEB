@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 interface UserFormModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (user: User) => Promise<Response>;
+    onSave: (user: User) => Promise<User>;
     initialData?: User;
 }
 
@@ -22,29 +22,24 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
-    const [actionType, setActionType] = useState<'create' | 'edit' | null>(null);
-
-
     const handleSnackbarClose = () => {
         setOpenSnackbar(false);
     };
 
     const handleFormSubmit = async (values: User) => {
         try {
-            const currentActionType = initialData ? 'edit' : 'create';
-            await onSave(values);
-    
-            if (currentActionType === 'create') {
-                setSnackbarMessage('Usuario registrado con éxito!');
-            } else if (currentActionType === 'edit') {
-                setSnackbarMessage('Usuario editado con éxito!');
-            }
-            
+            // Lógica para guardar el usuario...
+            const savedUser = await onSave(values);
+            console.log('User saved:', savedUser);
+            // Mostrar un mensaje de éxito
             setSnackbarSeverity('success');
+            setSnackbarMessage('Usuario registrado con éxito!');
             setOpenSnackbar(true);
         } catch (error) {
+            console.error('Error in handleFormSubmit:', error);
+            // Mostrar un mensaje de error
             setSnackbarSeverity('error');
-            setSnackbarMessage('Error al procesar el usuario.');
+            setSnackbarMessage('Error registrando al usuario.');
             setOpenSnackbar(true);
         }
     };

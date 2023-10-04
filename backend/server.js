@@ -47,7 +47,10 @@ app.put('/api/usuarios/:id', async (req, res, next) => {
       'UPDATE usuario SET apellido = ?, disciplina = ?, email = ?, edad = ?, sexo = ?, grado_academico = ?, institucion = ?, nombre = ?, pais = ? WHERE id = ?',
       [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, id]
     );
-    res.status(200).send();
+
+    const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
+    const updatedUser = rows[0];
+    res.status(200).json(updatedUser)
   } catch (error) {
     next(error);
   }
