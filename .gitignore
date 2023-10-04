@@ -18,10 +18,6 @@ pids/
 /build/
 /out/
 
-# Archivos de entorno
-.env
-.env.test
-
 # Archivos de caché de NPM y Yarn
 .npm
 .yarn-cache
