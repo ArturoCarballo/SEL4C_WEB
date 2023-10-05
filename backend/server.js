@@ -53,9 +53,12 @@ app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
 
 // Endpoint para añadir un nuevo usuario
 app.post('/api/usuarios', authMiddleware, async (req, res, next) => {
-  const {apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais} = req.body;
+  const {apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password} = req.body;
+
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
   try {
-    const [result] = await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais]);
+    const [result] = await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, hashedPassword]);
     res.status(201).json({ id: result.insertId });
   } catch (error) {
     next(error);
@@ -65,11 +68,13 @@ app.post('/api/usuarios', authMiddleware, async (req, res, next) => {
 // Endpoint para actualizar un usuario
 app.put('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
-  const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais } = req.body;
+  const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password } = req.body;
+
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
   try {
     await pool.execute(
-      'UPDATE usuario SET apellido = ?, disciplina = ?, email = ?, edad = ?, sexo = ?, grado_academico = ?, institucion = ?, nombre = ?, pais = ? WHERE id = ?',
-      [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, id]
+      'UPDATE usuario SET apellido = ?, disciplina = ?, email = ?, edad = ?, sexo = ?, grado_academico = ?, institucion = ?, nombre = ?, pais = ?, password = ? WHERE id = ?',
+      [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, id, hashedPassword]
     );
 
     const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
@@ -112,6 +117,61 @@ app.post('/api/admin/login', async (req, res, next) => {
 // Endpoint para logout
 app.get('/api/admin/logout', (req, res) => {
   res.status(200).send({ auth: false, token: null });
+});
+
+// Endpoint para preguntas
+app.get('/api/preguntas', async (req, res, next) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM pregunta');
+    res.json(rows)
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para obtener todos los admins
+app.get('/api/admins', authMiddleware, async (req, res, next) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM admin');
+    res.json(rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para añadir un nuevo admin
+app.post('/api/admins', authMiddleware, async (req, res, next) => {
+  const {username, password} = req.body;
+
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+  try {
+    const [result] = await pool.execute('INSERT INTO admin (username, password) VALUES (?, ?)', [username, hashedPassword]);
+    res.status(201).json({ id: result.insertId });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para actualizar un admin
+app.put('/api/admins/:id', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+  const { username, password} = req.body;
+
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+  try {
+    await pool.execute(
+      'UPDATE admin SET username = ?, password = ? WHERE id = ?',
+      [username, hashedPassword, id]
+    );
+
+    const [rows] = await pool.execute('SELECT * FROM admin WHERE id = ?', [id]);
+    const updatedAdmin = rows[0];
+    res.status(200).json(updatedAdmin)
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Middleware para manejar errores

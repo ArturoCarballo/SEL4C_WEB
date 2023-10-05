@@ -55,7 +55,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && node server.js",
-    "client": "cd frontend/sel4c-frontend && PORT=3001 npm start"
+    "client": "cd frontend/sel4c-frontend && set PORT=3001 && npm start"
   },
   "author": "",
   "license": "ISC"

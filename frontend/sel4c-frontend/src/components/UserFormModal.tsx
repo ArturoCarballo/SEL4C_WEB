@@ -27,6 +27,14 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
     };
 
     const handleFormSubmit = async (values: User) => {
+        if (!values.password) {
+            // Mostrar un mensaje indicando que la contraseña es obligatoria
+            setSnackbarSeverity('error');
+            setSnackbarMessage('La contraseña es obligatoria.');
+            setOpenSnackbar(true);
+            return;
+        }
+
         try {
             // Lógica para guardar el usuario...
             const savedUser = await onSave(values);
@@ -55,7 +63,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
             <div style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'absolute', backgroundColor: 'white', padding: '16px', width: '400px' }}>
                 <h2>{initialData ? 'Editar' : 'Añadir'} Usuario</h2>
                 <Formik
-                    initialValues={initialData || { nombre: '', apellido: '', email: '', edad: 0, disciplina: '', sexo: '', grado_academico: '', institucion: '', pais: '' }}
+                    initialValues={initialData ? {...initialData, password: ''} : { nombre: '', apellido: '', email: '', edad: 0, disciplina: '', sexo: '', grado_academico: '', institucion: '', pais: '', password: '' }}
                     onSubmit={handleFormSubmit}
                 >
                     {({ values, handleChange }) => (
@@ -171,6 +179,17 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                     label="Pais"
                                     variant="outlined"
                                     value={values.pais}
+                                    onChange={handleChange}
+                                />
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
+                                <Field
+                                    name="password"
+                                    as={TextField}
+                                    type="password"
+                                    label="Password"
+                                    variant="outlined"
+                                    value={values.password}
                                     onChange={handleChange}
                                 />
                             </FormControl>
