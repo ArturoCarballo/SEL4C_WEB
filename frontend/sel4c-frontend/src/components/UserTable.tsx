@@ -28,7 +28,7 @@ export const UserTable: React.FC = () => {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     const [filters, setFilters] = useState({
-        pais: '',
+        nombre_pais: '',
         disciplina: '',
         grado_academico: '',
         nombre_institucion: ''
@@ -256,9 +256,9 @@ export const UserTable: React.FC = () => {
 
                         <TableCell>
                             <TableSortLabel
-                                active={sortConfig?.key === 'pais'}
+                                active={sortConfig?.key === 'nombre_pais'}
                                 direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
-                                onClick={() => requestSort('pais')}
+                                onClick={() => requestSort('nombre_pais')}
                             >
                                 Pais
                             </TableSortLabel>
@@ -268,7 +268,7 @@ export const UserTable: React.FC = () => {
                 </TableHead>
                 <TableBody>
                     {displayedUsers.map((user) => (
-                        <TableRow key={user.id} onClick={() => setSelectedUser(user)}>
+                        <TableRow key={user.id}>
                             <TableCell>{user.nombre}</TableCell>
                             <TableCell>{user.apellido}</TableCell>
                             <TableCell>{user.email}</TableCell>
@@ -277,7 +277,8 @@ export const UserTable: React.FC = () => {
                             <TableCell>{user.disciplina}</TableCell>
                             <TableCell>{user.grado_academico}</TableCell>
                             <TableCell>{user.nombre_institucion}</TableCell>
-                            <TableCell>{user.pais}</TableCell>
+                            <TableCell>{user.nombre_pais}</TableCell>
+                            
                             <TableCell>
                                 <EditIcon onClick={() => setEditingUser(user)} style={{ cursor: 'pointer', marginRight: '10px' }} />
                                 <DeleteIcon onClick={() => handleDeleteUser(user.id!)} style={{ cursor: 'pointer' }} />

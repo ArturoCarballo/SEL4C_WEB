@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { Institucion } from '../interface/Institucion';
 import { fetchInstituciones } from '../services/Institucion.services';
+import { fetchPaises } from '../services/Pais.services';
+import { Pais } from '../interface/Pais';
 
 interface FilterComponentProps {
     filters: {
-        pais: string;
+        nombre_pais: string;
         disciplina: string;
         grado_academico: string;
         nombre_institucion: string;
     };
     setFilters: React.Dispatch<React.SetStateAction<{
-        pais: string;
+        nombre_pais: string;
         disciplina: string;
         grado_academico: string;
         nombre_institucion: string;
@@ -20,12 +22,26 @@ interface FilterComponentProps {
 
 const FilterComponent: React.FC<FilterComponentProps> = ({ filters, setFilters }) => {
     const [instituciones, setInstituciones] = useState<Institucion[]>([]);
+    const [paises, setPaises] = useState<Pais[]>([]);
 
     useEffect(() => {
         const loadData = async () => {
             try {
                 const data = await fetchInstituciones();
                 setInstituciones(data);
+            } catch (error) {
+                console.error("Error fetching instituciones: ", error);
+            }
+        };
+
+        loadData();
+    }, []);
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const data = await fetchPaises();
+                setPaises(data);
             } catch (error) {
                 console.error("Error fetching instituciones: ", error);
             }
@@ -49,15 +65,17 @@ const FilterComponent: React.FC<FilterComponentProps> = ({ filters, setFilters }
                 <InputLabel id="pais-label">País</InputLabel>
                 <Select
                     labelId="pais-label"
-                    id="pais"
-                    name="pais"
-                    value={filters.pais || ""}
+                    id="nombre_pais"
+                    name="nombre_pais"
+                    value={filters.nombre_pais || ""}
                     onChange={handleFilterChange}
                 >
                     <MenuItem value="">Todos</MenuItem>
-                    <MenuItem value={'México'}>México</MenuItem>
-                    <MenuItem value={'USA'}>USA</MenuItem>
-                    {/* Aquí puedes agregar más países */}
+                    {paises.map(pais => (
+                        <MenuItem key={pais.nombre_pais} value={pais.nombre_pais}>
+                            {pais.nombre_pais}
+                        </MenuItem>
+                    ))}
                 </Select>
             </FormControl>
 

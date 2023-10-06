@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from '@material-ui/core/Modal';
 import { User } from '../interface/User';
 import { Institucion } from '../interface/Institucion';
+import { Pais } from '../interface/Pais';
 import { Formik, Form, Field } from 'formik';
 import { Button, Select, MenuItem, InputLabel, FormControl, Snackbar } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
@@ -26,6 +27,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
     const [instituciones, setInstituciones] = useState<Institucion[]>([]);
+    const [paises, setPaises] = useState<Pais[]>([]);
 
     useEffect(() => {
         const loadData = async () => {
@@ -81,7 +83,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
             <div style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'absolute', backgroundColor: 'white', padding: '16px', width: '400px', borderRadius: '15px' }}>
                 <h2>{initialData ? 'Editar' : 'Añadir'} Usuario</h2>
                 <Formik
-                    initialValues={initialData ? { ...initialData, password: '' } : { nombre: '', apellido: '', email: '', edad: 0, disciplina: '', sexo: '', grado_academico: '', institucion: '', pais: '', password: '', nombre_institucion: '' }}
+                    initialValues={initialData ? { ...initialData, password: '' } : { nombre: '', apellido: '', email: '', edad: 0, disciplina: '', sexo: '', grado_academico: '', institucion: '', pais: '', password: '', nombre_institucion: '', nombre_pais: '', }}
                     onSubmit={handleFormSubmit}
                 >
                     {({ values, handleChange }) => (
@@ -197,15 +199,21 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                 </Field>
                             </FormControl>
                             <FormControl fullWidth margin="normal">
+                                <InputLabel id="pais-label">Pais</InputLabel>
                                 <Field
+                                    as={Select}
+                                    labelId="pais-label"
+                                    id="pais"
                                     name="pais"
-                                    as={TextField}
-                                    label="Pais"
-                                    variant="outlined"
                                     value={values.pais}
                                     onChange={handleChange}
-                                    InputLabelProps={{ shrink: true }}
-                                />
+                                >
+                                    {paises.map(pais => (
+                                        <MenuItem key={pais.nombre_pais} value={pais.nombre_pais}>
+                                            {pais.nombre_pais}
+                                        </MenuItem>
+                                    ))}
+                                </Field>
                             </FormControl>
                             <FormControl fullWidth margin="normal">
                                 <Field

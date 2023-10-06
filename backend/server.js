@@ -48,22 +48,25 @@ app.use(express.json());
 
 // Endpoint para obtener todos los alumnos
 app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
-  const { pais, disciplina, grado_academico, nombre_institucion } = req.query;
+  const { nombre_pais, disciplina, grado_academico, nombre_institucion } = req.query;
 
   let query = `
-    SELECT usuario.*, institucion.nombre_institucion 
+    SELECT usuario.*, institucion.nombre_institucion, pais.nombre_pais 
     FROM usuario 
-    JOIN institucion ON usuario.institucion = institucion.idinstitucion 
+    JOIN institucion ON usuario.institucion = institucion.idinstitucion
+    JOIN pais ON usuario.pais = pais.id
     WHERE 1=1
   `;
 
-  if (pais && pais !== "") query += ' AND pais = ?';
-  if (disciplina && disciplina !== "") query += ' AND disciplina = ?';
-  if (grado_academico && grado_academico !== "") query += ' AND grado_academico = ?';
-  if (nombre_institucion && nombre_institucion !== "") query += ' AND nombre_institucion = ?';
+  if (nombre_pais && nombre_pais !== "") query += ' AND pais.nombre_pais = ?';
+  if (disciplina && disciplina !== "") query += ' AND usuario.isciplina = ?';
+  if (grado_academico && grado_academico !== "") query += ' AND usuario.grado_academico = ?';
+  if (nombre_institucion && nombre_institucion !== "") query += ' AND institucion.nombre_institucion = ?';
+
+  console.log(query);
 
   try {
-      const [rows] = await pool.execute(query, [pais, disciplina, grado_academico, nombre_institucion].filter(Boolean));
+      const [rows] = await pool.execute(query, [nombre_pais, disciplina, grado_academico, nombre_institucion].filter(Boolean));
       res.json(rows);
   } catch (error) {
       next(error);
@@ -202,6 +205,17 @@ app.get('/api/instituciones', authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
+// Endpoint para obtener todos los paises
+app.get('/api/paises', authMiddleware, async (req, res, next) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM pais');
+    res.json(rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 // Middleware para manejar errores
 function errorHandler(err, req, res, next) {
