@@ -34,33 +34,6 @@ export const UserTable: React.FC = () => {
         nombre_institucion: ''
     });
 
-    // useEffect(() => {
-    //     const fetchUsersWithFilters = async () => {
-    //         try {
-    //             const response = await fetch('/api/usuarios'); // Ajusta esta URL si es necesario.
-    //             let data = await response.json();
-
-    //             if (filters.pais) {
-    //                 data = data.filter((user: User) => user.pais === filters.pais);
-    //             }
-
-    //             if (filters.disciplina) {
-    //                 data = data.filter((user: User) => user.disciplina === filters.disciplina);
-    //             }
-
-    //             if (filters.grado_academico) {
-    //                 data = data.filter((user: User) => user.grado_academico === filters.grado_academico);
-    //             }
-
-    //             setUsers(data);
-    //         } catch (error) {
-    //             console.error("Error fetching users: ", error);
-    //         }
-    //     };
-
-    //     fetchUsersWithFilters();
-    // }, [filters]);
-
     useEffect(() => {
         const loadUsers = async () => {
             try {

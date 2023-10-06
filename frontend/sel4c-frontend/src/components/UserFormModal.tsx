@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, CSSProperties } from 'react';
 import Modal from '@material-ui/core/Modal';
 import { User } from '../interface/User';
 import { Institucion } from '../interface/Institucion';
@@ -21,6 +21,18 @@ interface UserFormModalProps {
 function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
+
+const modalStyle: CSSProperties = {
+    maxHeight: '80vh',
+    overflowY: 'auto',
+    padding: '20px',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'white',
+    // ... cualquier otro estilo que desees agregar
+  };
 
 export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, onSave, initialData }) => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -94,7 +106,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
             open={isOpen}
             onClose={onClose}
         >
-            <div style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'absolute', backgroundColor: 'white', padding: '16px', width: '400px', borderRadius: '15px' }}>
+            <div style={modalStyle}>
                 <h2>{initialData ? 'Editar' : 'Añadir'} Usuario</h2>
                 <Formik
                     initialValues={initialData ? { ...initialData, password: '' } : { nombre: '', apellido: '', email: '', edad: 0, disciplina: '', sexo: '', grado_academico: '', institucion: '', pais: '', password: '', nombre_institucion: '', nombre_pais: '', }}
