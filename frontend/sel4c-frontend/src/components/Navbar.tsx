@@ -9,10 +9,12 @@ const Navbar: React.FC = () => {
     return (
         <AppBar position="static">
             <Toolbar>
-                {/* Logo / Brand Name */}
-                <Typography variant="h6" style={{ flexGrow: 1 }}>
-                    Milogo
-                </Typography>
+            
+          <img
+            src="/logo_blanco.png" 
+            alt="Imagen de inicio de sesión"
+            style={{ width: '300px', marginBottom: '20px' }}
+          />
 
                 {/* Rutas */}
                 <Button color="inherit" component={Link} to="/">Inicio</Button>
