@@ -9,6 +9,7 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 
 import { fetchInstituciones } from '../services/Institucion.services';
+import { fetchPaises } from '../services/Pais.services';
 
 interface UserFormModalProps {
     isOpen: boolean;
@@ -34,6 +35,19 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
             try {
                 const data = await fetchInstituciones();
                 setInstituciones(data);
+            } catch (error) {
+                console.error("Error fetching instituciones: ", error);
+            }
+        };
+
+        loadData();
+    }, []);
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const data = await fetchPaises();
+                setPaises(data);
             } catch (error) {
                 console.error("Error fetching instituciones: ", error);
             }
@@ -209,7 +223,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                     onChange={handleChange}
                                 >
                                     {paises.map(pais => (
-                                        <MenuItem key={pais.nombre_pais} value={pais.nombre_pais}>
+                                        <MenuItem key={pais.id} value={pais.id}>
                                             {pais.nombre_pais}
                                         </MenuItem>
                                     ))}

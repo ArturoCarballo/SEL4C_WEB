@@ -72,7 +72,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({ filters, setFilters }
                 >
                     <MenuItem value="">Todos</MenuItem>
                     {paises.map(pais => (
-                        <MenuItem key={pais.nombre_pais} value={pais.nombre_pais}>
+                        <MenuItem key={pais.id} value={pais.nombre_pais}>
                             {pais.nombre_pais}
                         </MenuItem>
                     ))}
