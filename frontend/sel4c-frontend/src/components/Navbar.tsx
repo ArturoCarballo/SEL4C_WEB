@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
             <Toolbar>
                 {/* Logo / Brand Name */}
                 <Typography variant="h6" style={{ flexGrow: 1 }}>
-                    MiLogo
+                    Milogo
                 </Typography>
 
                 {/* Rutas */}
