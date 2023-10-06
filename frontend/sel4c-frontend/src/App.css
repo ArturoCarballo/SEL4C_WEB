@@ -7,15 +7,9 @@
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,11 +22,42 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+main {
+  margin: 20px;
 }
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px; /* o cualquier otra medida que prefieras */
+}
+
+table {
+  border-collapse: collapse; /* Asegura que las líneas de la tabla y las celdas estén conectadas */
+  margin: auto; /* Centra la tabla horizontalmente */
+  width: 80%; /* O cualquier porcentaje o valor fijo que prefieras para establecer el ancho de la tabla */
+}
+
+th, td {
+  border-bottom: 1px solid #ddd; /* Añade una línea de separación en la parte inferior de las celdas */
+  padding: 8px; /* Añade un poco de espacio alrededor del texto en las celdas */
+  text-align: left; /* Alinea el texto a la izquierda. Puedes cambiarlo a "center" para centrar el texto */
+}
+
+th {
+  background-color: #f2f2f2; /* Añade un color de fondo a las celdas del encabezado para distinguirlas */
+}
+

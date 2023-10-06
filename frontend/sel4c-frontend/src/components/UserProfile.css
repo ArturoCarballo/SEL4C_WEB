@@ -1,0 +1,9 @@
+.answers-container {
+    display: flex;
+    justify-content: space-between; /* Ajusta los elementos para que haya espacio entre ellos */
+}
+
+.answers-container > div {
+    margin-left: 80px;
+    margin-right: 80px;
+}
