@@ -56,7 +56,6 @@ const FilterComponent: React.FC<FilterComponentProps> = ({ filters, setFilters }
             ...filters,
             [name]: event.target.value as string
         });
-        console.log(filters);
     };
 
     return (

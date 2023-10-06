@@ -3,6 +3,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login/Login';
 import { UserTable } from './components/UserTable';
 import { AdminTable } from './components/AdminTable';
+import UserProfile from './components/UserProfile';
 import Navbar from './components/Navbar';
 
 function MainApp() {
@@ -12,11 +13,14 @@ function MainApp() {
         <>
             {/* Renderiza la Navbar solo si la ruta no es "/login" */}
             {location.pathname !== '/login' && <Navbar />}
-            
+
             <Routes>
-                <Route path="/users" element={<PrivateRoute component={UserTable} />} />
-                <Route path="/admins" element={<PrivateRoute component={AdminTable} />} />
-                <Route path="*" element={<Navigate to="/login" />} /> 
+                <Route path="/" element={<PrivateRoute />}>
+                    <Route path="/perfil/:id" element={<UserProfile />} />
+                    <Route path="/users" element={<UserTable />} />
+                    <Route path="/admins" element={<AdminTable />} />
+                    <Route path="*" element={<Navigate to="/login" />} />
+                </Route>
             </Routes>
         </>
     );
