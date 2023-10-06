@@ -6,6 +6,7 @@ import FilterComponent from './FilterComponent';
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Button } from '@mui/material';
 import { fetchUsersWithFilters, addUser, updateUser, deleteUser } from '../services/User.services';
 import TablePagination from '@mui/material/TablePagination';
+import UserProfile from './UserProfile';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -23,6 +24,8 @@ export const UserTable: React.FC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const displayedUsers = sortedUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     const [filters, setFilters] = useState({
         pais: '',
@@ -128,7 +131,9 @@ export const UserTable: React.FC = () => {
         }
     };
 
-
+    if (selectedUser) {
+        return <UserProfile user={selectedUser} />;
+    }
 
     const handleEditUser = async (user: User) => {
         try {
@@ -263,7 +268,7 @@ export const UserTable: React.FC = () => {
                 </TableHead>
                 <TableBody>
                     {displayedUsers.map((user) => (
-                        <TableRow key={user.id}>
+                        <TableRow key={user.id} onClick={() => setSelectedUser(user)}>
                             <TableCell>{user.nombre}</TableCell>
                             <TableCell>{user.apellido}</TableCell>
                             <TableCell>{user.email}</TableCell>
