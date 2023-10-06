@@ -130,16 +130,6 @@ export const AdminTable: React.FC = () => {
                                 Username
                             </TableSortLabel>
                         </TableCell>
-
-                        <TableCell>
-                            <TableSortLabel
-                                active={sortConfig?.key === 'password'}
-                                direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
-                                onClick={() => requestSort('password')}
-                            >
-                                Password
-                            </TableSortLabel>
-                        </TableCell>
                         <TableCell>Acciones</TableCell>
                     </TableRow>
                 </TableHead>
@@ -147,7 +137,6 @@ export const AdminTable: React.FC = () => {
                     {sortedAdmins.map((admin) => (
                         <TableRow key={admin.id}>
                             <TableCell>{admin.username}</TableCell>
-                            <TableCell>{admin.password}</TableCell>
                             <TableCell>
                                 <EditIcon onClick={() => setEditingAdmin(admin)} style={{cursor: 'pointer', marginRight: '10px'}} />
                                 <DeleteIcon onClick={() => handleDeleteAdmin(admin.id!)} style={{cursor: 'pointer'}} />

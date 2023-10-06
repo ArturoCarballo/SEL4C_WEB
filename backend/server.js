@@ -22,7 +22,11 @@ const pool = mysql.createPool(dbConfig);
 
 // Middleware para proteger rutas
 function authMiddleware(req, res, next) {
-  const token = req.headers['authorization'].split(" ")[1];;
+  if (!req.headers['authorization']) {
+      return res.status(403).json({ message: 'No authorization header provided.' });
+  }
+
+  const token = req.headers['authorization'].split(" ")[1];
 
   if (!token) {
       return res.status(403).json({ message: 'No token provided.' });
@@ -37,17 +41,32 @@ function authMiddleware(req, res, next) {
   });
 }
 
+
 // Middleware para parsear el cuerpo de las solicitudes JSON
 app.use(express.json());
 
 
 // Endpoint para obtener todos los alumnos
 app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
+  const { pais, disciplina, grado_academico, nombre_institucion } = req.query;
+
+  let query = `
+    SELECT usuario.*, institucion.nombre_institucion 
+    FROM usuario 
+    JOIN institucion ON usuario.institucion = institucion.idinstitucion 
+    WHERE 1=1
+  `;
+
+  if (pais && pais !== "") query += ' AND pais = ?';
+  if (disciplina && disciplina !== "") query += ' AND disciplina = ?';
+  if (grado_academico && grado_academico !== "") query += ' AND grado_academico = ?';
+  if (nombre_institucion && nombre_institucion !== "") query += ' AND nombre_institucion = ?';
+
   try {
-    const [rows] = await pool.execute('SELECT * FROM usuario');
-    res.json(rows);
+      const [rows] = await pool.execute(query, [pais, disciplina, grado_academico, nombre_institucion].filter(Boolean));
+      res.json(rows);
   } catch (error) {
-    next(error);
+      next(error);
   }
 });
 
@@ -74,7 +93,7 @@ app.put('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   try {
     await pool.execute(
       'UPDATE usuario SET apellido = ?, disciplina = ?, email = ?, edad = ?, sexo = ?, grado_academico = ?, institucion = ?, nombre = ?, pais = ?, password = ? WHERE id = ?',
-      [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, id, hashedPassword]
+      [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, hashedPassword, id] // <-- Nota el orden aquí
     );
 
     const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
@@ -169,6 +188,16 @@ app.put('/api/admins/:id', authMiddleware, async (req, res, next) => {
     const [rows] = await pool.execute('SELECT * FROM admin WHERE id = ?', [id]);
     const updatedAdmin = rows[0];
     res.status(200).json(updatedAdmin)
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para obtener todos los admins
+app.get('/api/instituciones', authMiddleware, async (req, res, next) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM institucion');
+    res.json(rows);
   } catch (error) {
     next(error);
   }

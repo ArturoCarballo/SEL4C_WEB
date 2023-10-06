@@ -10,5 +10,6 @@ export interface User {
     nombre: string;
     pais: string;
     password: string;
+    nombre_institucion: string;
   }
   

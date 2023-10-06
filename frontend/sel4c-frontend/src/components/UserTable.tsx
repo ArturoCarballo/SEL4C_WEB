@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { User } from '../interface/User';
 import { UserFormModal } from './UserFormModal';
+import FilterComponent from './FilterComponent';
 
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Button } from '@mui/material';
-import { fetchUsers, addUser, updateUser, deleteUser } from '../services/User.services';
+import { fetchUsersWithFilters, addUser, updateUser, deleteUser } from '../services/User.services';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,17 +18,52 @@ export const UserTable: React.FC = () => {
     const [isAddingUser, setIsAddingUser] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
 
+    const [filters, setFilters] = useState({
+        pais: '',
+        disciplina: '',
+        grado_academico: '',
+        nombre_institucion: ''
+    });
+
+    // useEffect(() => {
+    //     const fetchUsersWithFilters = async () => {
+    //         try {
+    //             const response = await fetch('/api/usuarios'); // Ajusta esta URL si es necesario.
+    //             let data = await response.json();
+    
+    //             if (filters.pais) {
+    //                 data = data.filter((user: User) => user.pais === filters.pais);
+    //             }
+    
+    //             if (filters.disciplina) {
+    //                 data = data.filter((user: User) => user.disciplina === filters.disciplina);
+    //             }
+    
+    //             if (filters.grado_academico) {
+    //                 data = data.filter((user: User) => user.grado_academico === filters.grado_academico);
+    //             }
+    
+    //             setUsers(data);
+    //         } catch (error) {
+    //             console.error("Error fetching users: ", error);
+    //         }
+    //     };
+    
+    //     fetchUsersWithFilters();
+    // }, [filters]);
+
     useEffect(() => {
         const loadUsers = async () => {
             try {
-                const usersList = await fetchUsers();
+                const usersList = await fetchUsersWithFilters(filters);
                 setUsers(usersList);
             } catch (error) {
                 console.error("Error fetching users: ", error);
             }
         };
+    
         loadUsers();
-    }, []);
+    }, [filters]);
     
 
     useEffect(() => {
@@ -52,6 +88,8 @@ export const UserTable: React.FC = () => {
         setSortedUsers(sortedArray);
     }, [users, sortConfig]);
 
+    
+
     const requestSort = (key: keyof User) => {
         let direction: 'asc' | 'desc' = 'asc';
         if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -75,7 +113,7 @@ export const UserTable: React.FC = () => {
     const handleAddUser = async (user: User) => {
         try {
             const newUser = await addUser(user);
-            const updatedUsers = await fetchUsers();
+            const updatedUsers = await fetchUsersWithFilters(filters);
             setUsers(updatedUsers); 
             return newUser;
         } catch (error) {
@@ -89,7 +127,10 @@ export const UserTable: React.FC = () => {
     const handleEditUser = async (user: User) => {
         try {
             const updatedUser = await updateUser(user);
-            setUsers(prevUsers => prevUsers.map(u => u.id === user.id ? updatedUser : u));
+
+            const updatedUsersList = await fetchUsersWithFilters(filters);
+            setUsers(updatedUsersList);
+
             return updatedUser;
         } catch (error) {
             console.error("Error updating user: ", error);
@@ -100,6 +141,7 @@ export const UserTable: React.FC = () => {
 
     return (
         <div>
+            <FilterComponent filters={filters} setFilters={setFilters} />
             <h2>Usuarios</h2>
             <Button variant="contained" color="primary" onClick={() => setIsAddingUser(true)}>
                 Añadir Usuario
@@ -193,9 +235,9 @@ export const UserTable: React.FC = () => {
 
                         <TableCell>
                             <TableSortLabel
-                                active={sortConfig?.key === 'institucion'}
+                                active={sortConfig?.key === 'nombre_institucion'}
                                 direction={sortConfig?.direction as 'asc' | 'desc' | undefined}
-                                onClick={() => requestSort('institucion')}
+                                onClick={() => requestSort('nombre_institucion')}
                             >
                                 Institucion
                             </TableSortLabel>
@@ -223,7 +265,7 @@ export const UserTable: React.FC = () => {
                             <TableCell>{user.sexo}</TableCell>
                             <TableCell>{user.disciplina}</TableCell>
                             <TableCell>{user.grado_academico}</TableCell>
-                            <TableCell>{user.institucion}</TableCell>
+                            <TableCell>{user.nombre_institucion}</TableCell>
                             <TableCell>{user.pais}</TableCell>
                             <TableCell>
                                 <EditIcon onClick={() => setEditingUser(user)} style={{cursor: 'pointer', marginRight: '10px'}} />

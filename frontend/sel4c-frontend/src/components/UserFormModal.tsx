@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '@material-ui/core/Modal';
 import { User } from '../interface/User';
+import { Institucion } from '../interface/Institucion';
 import { Formik, Form, Field } from 'formik';
 import { Button, Select, MenuItem, InputLabel, FormControl, Snackbar } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
+
+import { fetchInstituciones } from '../services/Institucion.services';
 
 interface UserFormModalProps {
     isOpen: boolean;
@@ -21,6 +24,21 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+    const [instituciones, setInstituciones] = useState<Institucion[]>([]);
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const data = await fetchInstituciones();
+                setInstituciones(data);
+            } catch (error) {
+                console.error("Error fetching instituciones: ", error);
+            }
+        };
+
+        loadData();
+    }, []);
 
     const handleSnackbarClose = () => {
         setOpenSnackbar(false);
@@ -51,19 +69,19 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
             setOpenSnackbar(true);
         }
     };
-    
-    
-    
+
+
+
 
     return (
         <Modal
             open={isOpen}
             onClose={onClose}
         >
-            <div style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'absolute', backgroundColor: 'white', padding: '16px', width: '400px' }}>
+            <div style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'absolute', backgroundColor: 'white', padding: '16px', width: '400px', borderRadius: '15px' }}>
                 <h2>{initialData ? 'Editar' : 'Añadir'} Usuario</h2>
                 <Formik
-                    initialValues={initialData ? {...initialData, password: ''} : { nombre: '', apellido: '', email: '', edad: 0, disciplina: '', sexo: '', grado_academico: '', institucion: '', pais: '', password: '' }}
+                    initialValues={initialData ? { ...initialData, password: '' } : { nombre: '', apellido: '', email: '', edad: 0, disciplina: '', sexo: '', grado_academico: '', institucion: '', pais: '', password: '', nombre_institucion: '' }}
                     onSubmit={handleFormSubmit}
                 >
                     {({ values, handleChange }) => (
@@ -76,6 +94,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                     variant="outlined"
                                     value={values.nombre}
                                     onChange={handleChange}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             </FormControl>
                             <FormControl fullWidth margin="normal">
@@ -86,6 +105,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                     variant="outlined"
                                     value={values.apellido}
                                     onChange={handleChange}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             </FormControl>
                             <FormControl fullWidth margin="normal">
@@ -96,6 +116,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                     variant="outlined"
                                     value={values.email}
                                     onChange={handleChange}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             </FormControl>
                             <FormControl fullWidth variant="outlined" margin="normal">
@@ -168,8 +189,11 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                     value={values.institucion}
                                     onChange={handleChange}
                                 >
-                                    <MenuItem value={'Tecnologico de Monterrey'}>Tecnológico de Monterrey</MenuItem>
-                                    <MenuItem value={'Otros'}>Otros</MenuItem>
+                                    {instituciones.map(institucion => (
+                                        <MenuItem key={institucion.idinstitucion} value={institucion.idinstitucion}>
+                                            {institucion.nombre_institucion}
+                                        </MenuItem>
+                                    ))}
                                 </Field>
                             </FormControl>
                             <FormControl fullWidth margin="normal">
@@ -180,6 +204,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                     variant="outlined"
                                     value={values.pais}
                                     onChange={handleChange}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             </FormControl>
                             <FormControl fullWidth margin="normal">
@@ -191,6 +216,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                     variant="outlined"
                                     value={values.password}
                                     onChange={handleChange}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             </FormControl>
                             <Button type="submit" variant="contained" color="primary">

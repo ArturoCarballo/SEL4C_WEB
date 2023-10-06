@@ -53,9 +53,6 @@ export const AdminFormModal: React.FC<AdminFormModalProps> = ({ isOpen, onClose,
         }
     };
     
-    
-    
-
     return (
         <Modal
             open={isOpen}

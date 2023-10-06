@@ -15,6 +15,7 @@ async function login(username: string, password: string) {
       const data = await response.json();
       if (data && data.token) {
         localStorage.setItem("admin_token", data.token);
+        
         return data.token;
       } else {
         return null;

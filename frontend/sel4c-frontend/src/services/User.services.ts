@@ -15,6 +15,26 @@ export const fetchUsers = async (): Promise<User[]> => {
     return response.json();
 }
 
+export const fetchUsersWithFilters = async (filters: any): Promise<User[]> => {
+    const token = localStorage.getItem("admin_token");
+
+    // 1. Construye la cadena de consulta
+    const queryString = new URLSearchParams(filters).toString();
+
+    console.log("Token: " + token)
+    
+    const response = await fetch(`/api/usuarios?${queryString}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': token ? `Bearer ${token}` : ''
+        }
+    });
+    
+    if (!response.ok) throw new Error('Error fetching users');
+    return response.json();
+}
+
 export const addUser = async (user: User): Promise<User> => {
     const token = localStorage.getItem("admin_token");
 
