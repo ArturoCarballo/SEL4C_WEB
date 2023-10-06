@@ -31,6 +31,30 @@ function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const pageStyle = {
+      background: 'linear-gradient(to bottom, #021B79, #ffffff)',
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
+    };
+
+    const containerStyle = {
+      background: 'rgba(255, 255, 255, 0.8)',
+      padding: '5vh',
+      margin: '5vh auto',
+      borderRadius: '10px',
+      boxShadow: '0px 0px 10px rgba(0,0,0,0.1)',
+    };
+
+    const textFieldStyle = {
+        background: 'rgba(255, 255, 255, 0.8)',
+        marginBottom: '10px',
+    };
+    
+  
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
@@ -46,56 +70,66 @@ function Login() {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              mt: 8,
-            }}
-          >
-            <Typography component="h1" variant="h5">
+      
+      <div style={pageStyle}>
+      <Container component="main" maxWidth="xs" style={containerStyle}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            mt: 8,
+          }}
+        >
+          <img
+            src="/logo_inicio.png" 
+            alt="Imagen de inicio de sesión"
+            style={{ width: '300px', marginBottom: '20px' }}
+          />
+          <Typography component="h1" variant="h3" sx={{ fontSize: '2.5rem' }}>
               Inicio de sesión
             </Typography>
-            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Nombre de usuario"
-                name="username"
-                autoFocus
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Contraseña"
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Iniciar sesión
-              </Button>
-            </Box>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Nombre de usuario"
+              name="username"
+              autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              sx={textFieldStyle}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Contraseña"
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={textFieldStyle}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{ mt: 3, mb: 2, backgroundColor: 'green', '&:hover': { backgroundColor: 'blue' } }}
+            >
+              Iniciar sesión
+            </Button>
           </Box>
-        </Container>
-      );
-    }
-    
+        </Box>
+      </Container>
+    </div>
+  );
+}
+
 export default Login;
