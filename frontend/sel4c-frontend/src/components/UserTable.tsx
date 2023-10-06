@@ -5,6 +5,7 @@ import FilterComponent from './FilterComponent';
 
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Button } from '@mui/material';
 import { fetchUsersWithFilters, addUser, updateUser, deleteUser } from '../services/User.services';
+import TablePagination from '@mui/material/TablePagination';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -18,6 +19,11 @@ export const UserTable: React.FC = () => {
     const [isAddingUser, setIsAddingUser] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
 
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    const displayedUsers = sortedUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
     const [filters, setFilters] = useState({
         pais: '',
         disciplina: '',
@@ -30,25 +36,25 @@ export const UserTable: React.FC = () => {
     //         try {
     //             const response = await fetch('/api/usuarios'); // Ajusta esta URL si es necesario.
     //             let data = await response.json();
-    
+
     //             if (filters.pais) {
     //                 data = data.filter((user: User) => user.pais === filters.pais);
     //             }
-    
+
     //             if (filters.disciplina) {
     //                 data = data.filter((user: User) => user.disciplina === filters.disciplina);
     //             }
-    
+
     //             if (filters.grado_academico) {
     //                 data = data.filter((user: User) => user.grado_academico === filters.grado_academico);
     //             }
-    
+
     //             setUsers(data);
     //         } catch (error) {
     //             console.error("Error fetching users: ", error);
     //         }
     //     };
-    
+
     //     fetchUsersWithFilters();
     // }, [filters]);
 
@@ -61,10 +67,10 @@ export const UserTable: React.FC = () => {
                 console.error("Error fetching users: ", error);
             }
         };
-    
+
         loadUsers();
     }, [filters]);
-    
+
 
     useEffect(() => {
         let sortedArray = [...users];
@@ -88,7 +94,7 @@ export const UserTable: React.FC = () => {
         setSortedUsers(sortedArray);
     }, [users, sortConfig]);
 
-    
+
 
     const requestSort = (key: keyof User) => {
         let direction: 'asc' | 'desc' = 'asc';
@@ -114,15 +120,15 @@ export const UserTable: React.FC = () => {
         try {
             const newUser = await addUser(user);
             const updatedUsers = await fetchUsersWithFilters(filters);
-            setUsers(updatedUsers); 
+            setUsers(updatedUsers);
             return newUser;
         } catch (error) {
             console.error("Error adding user: ", error);
             throw error;
         }
     };
-    
-    
+
+
 
     const handleEditUser = async (user: User) => {
         try {
@@ -137,7 +143,7 @@ export const UserTable: React.FC = () => {
             throw error;
         }
     };
-    
+
 
     return (
         <div>
@@ -231,7 +237,7 @@ export const UserTable: React.FC = () => {
                             >
                                 Grado Academico
                             </TableSortLabel>
-                        </TableCell> 
+                        </TableCell>
 
                         <TableCell>
                             <TableSortLabel
@@ -256,7 +262,7 @@ export const UserTable: React.FC = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {sortedUsers.map((user) => (
+                    {displayedUsers.map((user) => (
                         <TableRow key={user.id}>
                             <TableCell>{user.nombre}</TableCell>
                             <TableCell>{user.apellido}</TableCell>
@@ -268,13 +274,22 @@ export const UserTable: React.FC = () => {
                             <TableCell>{user.nombre_institucion}</TableCell>
                             <TableCell>{user.pais}</TableCell>
                             <TableCell>
-                                <EditIcon onClick={() => setEditingUser(user)} style={{cursor: 'pointer', marginRight: '10px'}} />
-                                <DeleteIcon onClick={() => handleDeleteUser(user.id!)} style={{cursor: 'pointer'}} />
+                                <EditIcon onClick={() => setEditingUser(user)} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                                <DeleteIcon onClick={() => handleDeleteUser(user.id!)} style={{ cursor: 'pointer' }} />
                             </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
+            <TablePagination
+                component="div"
+                count={sortedUsers.length}
+                page={page}
+                onPageChange={(event, newPage) => setPage(newPage)}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={(event) => setRowsPerPage(parseInt(event.target.value, 10))}
+                labelRowsPerPage="Usuarios por página:"
+            />
             <LogoutButton></LogoutButton>
         </div>
     );
