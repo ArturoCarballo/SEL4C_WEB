@@ -132,19 +132,19 @@ app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Endpoint para iniciar sesion como admin
+// Endpoint para iniciar sesion como usuario
 app.post('/api/usuarios/login', async (req, res, next) => {
   const { email, password } = req.body;
 
   // Verifica el usuario y la contraseña
   const [usuario] = await pool.execute('SELECT * FROM usuario WHERE email = ?', [email]);
 
-  if (!usuario || !bcrypt.compareSync(password, usuario.password)) {
+  if (!usuario || !bcrypt.compareSync(password, usuario[0].password)) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
   // Genera un token JWT
-  const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, {
+  const token = jwt.sign({ id: usuario[0].id }, process.env.SECRET_KEY, {
     expiresIn: 86400 // 24 horas
   });
   res.json({ auth: true, token: token });
