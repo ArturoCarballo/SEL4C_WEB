@@ -59,7 +59,7 @@ app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
   `;
 
   if (nombre_pais && nombre_pais !== "") query += ' AND pais.nombre_pais = ?';
-  if (disciplina && disciplina !== "") query += ' AND usuario.isciplina = ?';
+  if (disciplina && disciplina !== "") query += ' AND usuario.disciplina = ?';
   if (grado_academico && grado_academico !== "") query += ' AND usuario.grado_academico = ?';
   if (nombre_institucion && nombre_institucion !== "") query += ' AND institucion.nombre_institucion = ?';
 
