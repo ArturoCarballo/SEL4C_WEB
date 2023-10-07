@@ -57,7 +57,8 @@ app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
     maxEdad, 
     nombre, 
     apellido, 
-    email 
+    email,
+    sexo 
   } = req.query;
 
   let query = `
@@ -113,6 +114,11 @@ app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
   if (email && email !== "") {
     query += ' AND usuario.email LIKE ?';
     params.push(`%${email}%`);
+  }
+
+  if (sexo && sexo !== "") {
+    query += ' AND usuario.sexo = ?';
+    params.push(sexo);
   }
 
   try {

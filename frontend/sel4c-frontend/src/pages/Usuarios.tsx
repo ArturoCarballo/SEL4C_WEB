@@ -13,7 +13,8 @@ const Usuarios: React.FC = () => {
         maxEdad: 100,
         nombre: '',
         apellido: '',
-        email: ''
+        email: '',
+        sexo: ''
       });
       return (
         <div>

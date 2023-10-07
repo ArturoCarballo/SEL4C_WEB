@@ -21,6 +21,7 @@ type FiltersType = {
     nombre: string;
     apellido: string;
     email: string;
+    sexo: string;
   };
 
   interface UserTableProps {

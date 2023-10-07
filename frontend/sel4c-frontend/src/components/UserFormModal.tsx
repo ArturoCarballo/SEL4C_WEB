@@ -175,6 +175,10 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                 >
                                     <MenuItem value={'Ingenieria Y Ciencias'}>Ingeniería y Ciencias</MenuItem>
                                     <MenuItem value={'Humanidades y Educacion'}>Humanidades y Educación</MenuItem>
+                                    <MenuItem value={'Ciencias Sociales'}>Ciencias Sociales</MenuItem>
+                                    <MenuItem value={'Ciencias de la Salud'}>Ciencias de la Salud</MenuItem>
+                                    <MenuItem value={'Arquitectura Arte y Diseño'}>Arquitectura Arte y Diseño</MenuItem>
+                                    <MenuItem value={'Negocios'}>Negocios</MenuItem>
                                     {/* ... otros valores de disciplina ... */}
                                 </Field>
                             </FormControl>
@@ -190,6 +194,8 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, o
                                 >
                                     <MenuItem value={'Masculino'}>Masculino</MenuItem>
                                     <MenuItem value={'Femenino'}>Femenino</MenuItem>
+                                    <MenuItem value={'No binario'}>No binario</MenuItem>
+                                    <MenuItem value={'Prefiero no decir'}>Prefiero no decir</MenuItem>
                                 </Field>
                             </FormControl>
                             <FormControl fullWidth margin="normal">

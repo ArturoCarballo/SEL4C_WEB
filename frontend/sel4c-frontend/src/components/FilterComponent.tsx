@@ -27,6 +27,7 @@ interface FilterComponentProps {
     nombre: string;
     apellido: string;
     email: string;
+    sexo: string;
   };
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -39,6 +40,7 @@ interface FilterComponentProps {
       nombre: string;
       apellido: string;
       email: string;
+      sexo: string;
     }>
   >;
 }
@@ -49,7 +51,21 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 }) => {
   const [instituciones, setInstituciones] = useState<Institucion[]>([]);
   const [paises, setPaises] = useState<Pais[]>([]);
+  const [sexo, setSexo] = useState({
+    hombre: true, // defaultChecked
+    mujer: true, // defaultChecked
+    noBinarie: true, // defaultChecked
+    prefieroNoDecir: true // defaultChecked
+  });
 
+  const handleSexoChange = (sexoType: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    if(event.target.checked) {
+        setFilters(prev => ({ ...prev, sexo: sexoType }));
+    } else {
+        // Uncheck. This is a simplified behavior. In reality, you might want to reset to a default or "all" value.
+        setFilters(prev => ({ ...prev, sexo: '' }));
+    }
+};
 
   useEffect(() => {
     const loadData = async () => {
@@ -156,38 +172,58 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
         <div style={optionContainerStyle}>
           <FormControlLabel
             style={{ marginLeft: "15px" }}
-            control={<Checkbox style={checkedCheckboxStyle} defaultChecked />}
+            control={
+              <Checkbox 
+                style={checkedCheckboxStyle} 
+                checked={filters.sexo === 'Masculino'}
+                onChange={handleSexoChange('Masculino')}
+              />
+            }
             label={<Typography style={optionLabelStyle}>Hombre</Typography>}
           />
         </div>
         <div style={optionContainerStyle}>
           <FormControlLabel
             style={{ marginLeft: "15px" }}
-            control={<Checkbox style={checkedCheckboxStyle} defaultChecked />}
+            control={
+              <Checkbox 
+                style={checkedCheckboxStyle} 
+                checked={filters.sexo === 'Femenino'}
+                onChange={handleSexoChange('Femenino')}
+              />
+            }
             label={<Typography style={optionLabelStyle}>Mujer</Typography>}
           />
         </div>
         <div style={optionContainerStyle}>
           <FormControlLabel
             style={{ marginLeft: "15px" }}
-            control={<Checkbox style={checkedCheckboxStyle} defaultChecked />}
-            label={<Typography style={optionLabelStyle}>No binarie</Typography>}
+            control={
+              <Checkbox 
+                style={checkedCheckboxStyle} 
+                checked={filters.sexo === 'No binario'}
+                onChange={handleSexoChange('No binario')}
+              />
+            }
+            label={<Typography style={optionLabelStyle}>No binario  </Typography>}
           />
         </div>
         <div style={optionContainerStyle}>
           <FormControlLabel
             style={{ marginLeft: "15px" }}
-            control={<Checkbox style={checkedCheckboxStyle} defaultChecked />}
-            label={
-              <Typography style={optionLabelStyle}>
-                Prefiero no decir
-              </Typography>
+            control={
+              <Checkbox 
+                style={checkedCheckboxStyle} 
+                checked={filters.sexo === 'Prefiero no decir'}
+                onChange={handleSexoChange('Prefiero no decir')}
+              />
             }
+            label={<Typography style={optionLabelStyle}>Prefiero no decir</Typography>}
           />
         </div>
       </div>
-      <div style={{alignItems: "center" }}>
-      <Typography variant="h6" style={wordLabelStyle}>Nombre:</Typography>
+      <div style={{ alignItems: "center" }}>
+        <Typography variant="h6" style={wordLabelStyle}>Nombre:</Typography>
         <TextField
           value={filters.nombre || ""}
           onChange={e => setFilters({ ...filters, nombre: e.target.value })}
@@ -291,6 +327,18 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             <MenuItem value={"Humanidades y Educacion"}>
               Humanidades y Educación
             </MenuItem>
+            <MenuItem value={"Ciencias Sociales"}>
+              Ciencias Sociales
+            </MenuItem>
+            <MenuItem value={"Ciencias de la Salud"}>
+              Ciencias de la Salud
+            </MenuItem>
+            <MenuItem value={"Arquitectura Arte y Diseño"}>
+              Arquitectura Arte y Diseño
+            </MenuItem>
+            <MenuItem value={"Negocios"}>
+              Negocios
+            </MenuItem>
             {/* ... otros valores de disciplina ... */}
           </Select>
         </FormControl>
@@ -311,7 +359,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             <MenuItem value="">Todos</MenuItem>
             <MenuItem value={"Pregrado"}>Pregrado</MenuItem>
             <MenuItem value={"Posgrado"}>Posgrado</MenuItem>
-            <MenuItem value={"Educacion continua"}></MenuItem>
+            <MenuItem value={"Educacion continua"}>Educacion continua</MenuItem>
           </Select>
         </FormControl>
       </div>
