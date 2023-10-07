@@ -26,7 +26,7 @@ interface FilterComponentProps {
     maxEdad: number;
     nombre: string;
     apellido: string;
-    correo: string;
+    email: string;
   };
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -38,7 +38,7 @@ interface FilterComponentProps {
       maxEdad: number;
       nombre: string;
       apellido: string;
-      correo: string;
+      email: string;
     }>
   >;
 }
@@ -203,8 +203,8 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 
         <Typography variant="h6" style={wordLabelStyle}>Correo:</Typography>
         <TextField
-          value={filters.correo || ""}
-          onChange={e => setFilters({ ...filters, correo: e.target.value })}
+          value={filters.email || ""}
+          onChange={e => setFilters({ ...filters, email: e.target.value })}
           style={textboxStyle}
         />
       </div>
