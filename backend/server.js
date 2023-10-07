@@ -48,7 +48,7 @@ app.use(express.json());
 
 // Endpoint para obtener todos los alumnos
 app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
-  const { nombre_pais, disciplina, grado_academico, nombre_institucion } = req.query;
+  const { nombre_pais, disciplina, grado_academico, nombre_institucion, minEdad, maxEdad } = req.query;
 
   let query = `
     SELECT usuario.*, institucion.nombre_institucion, pais.nombre_pais 
@@ -62,9 +62,11 @@ app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
   if (disciplina && disciplina !== "") query += ' AND usuario.disciplina = ?';
   if (grado_academico && grado_academico !== "") query += ' AND usuario.grado_academico = ?';
   if (nombre_institucion && nombre_institucion !== "") query += ' AND institucion.nombre_institucion = ?';
+  if (minEdad) query += ' AND usuario.edad >= ?';
+  if (maxEdad) query += ' AND usuario.edad <= ?';
 
   try {
-    const [rows] = await pool.execute(query, [nombre_pais, disciplina, grado_academico, nombre_institucion].filter(Boolean));
+    const [rows] = await pool.execute(query, [nombre_pais, disciplina, grado_academico, nombre_institucion,  minEdad, maxEdad].filter(Boolean));
     res.json(rows);
   } catch (error) {
     next(error);

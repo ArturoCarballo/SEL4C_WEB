@@ -36,7 +36,9 @@ export const UserTable: React.FC = () => {
         nombre_pais: '',
         disciplina: '',
         grado_academico: '',
-        nombre_institucion: ''
+        nombre_institucion: '',
+        minEdad: 0,
+        maxEdad: 100
     });
 
     useEffect(() => {
