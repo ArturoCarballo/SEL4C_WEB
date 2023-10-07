@@ -23,21 +23,21 @@ const pool = mysql.createPool(dbConfig);
 // Middleware para proteger rutas
 function authMiddleware(req, res, next) {
   if (!req.headers['authorization']) {
-    return res.status(403).json({ message: 'No authorization header provided.' });
+      return res.status(403).json({ message: 'No authorization header provided.' });
   }
 
   const token = req.headers['authorization'].split(" ")[1];
 
   if (!token) {
-    return res.status(403).json({ message: 'No token provided.' });
+      return res.status(403).json({ message: 'No token provided.' });
   }
 
   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-    if (err) {
-      return res.status(500).json({ message: 'Failed to authenticate token.' });
-    }
-    req.userId = decoded.id;
-    next();
+      if (err) {
+          return res.status(500).json({ message: 'Failed to authenticate token.' });
+      }
+      req.userId = decoded.id;
+      next();
   });
 }
 
@@ -63,17 +63,19 @@ app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
   if (grado_academico && grado_academico !== "") query += ' AND usuario.grado_academico = ?';
   if (nombre_institucion && nombre_institucion !== "") query += ' AND institucion.nombre_institucion = ?';
 
+  console.log(query);
+
   try {
-    const [rows] = await pool.execute(query, [nombre_pais, disciplina, grado_academico, nombre_institucion].filter(Boolean));
-    res.json(rows);
+      const [rows] = await pool.execute(query, [nombre_pais, disciplina, grado_academico, nombre_institucion].filter(Boolean));
+      res.json(rows);
   } catch (error) {
-    next(error);
+      next(error);
   }
 });
 
 // Endpoint para añadir un nuevo usuario
 app.post('/api/usuarios', authMiddleware, async (req, res, next) => {
-  const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password } = req.body;
+  const {apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password} = req.body;
 
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
@@ -104,22 +106,6 @@ app.put('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
-
-// Endpoint para tener un usuario
-app.get('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
-    if (rows.length > 0) {
-      res.json(rows[0]);
-    } else {
-      res.status(404).json({ message: "Usuario no encontrado" });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
-
 
 // Endpoint para eliminar un usuario
 app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
@@ -158,12 +144,12 @@ app.post('/api/admin/login', async (req, res, next) => {
   const [admin] = await pool.execute('SELECT * FROM admin WHERE username = ?', [username]);
 
   if (!admin || !bcrypt.compareSync(password, admin[0].password)) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials' });
   }
 
   // Genera un token JWT
   const token = jwt.sign({ id: admin[0].id }, process.env.SECRET_KEY, {
-    expiresIn: 86400 // 24 horas
+      expiresIn: 86400 // 24 horas
   });
   res.json({ auth: true, token: token });
 });
@@ -195,7 +181,7 @@ app.get('/api/admins', authMiddleware, async (req, res, next) => {
 
 // Endpoint para añadir un nuevo admin
 app.post('/api/admins', authMiddleware, async (req, res, next) => {
-  const { username, password } = req.body;
+  const {username, password} = req.body;
 
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
@@ -210,7 +196,7 @@ app.post('/api/admins', authMiddleware, async (req, res, next) => {
 // Endpoint para actualizar un admin
 app.put('/api/admins/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
-  const { username, password } = req.body;
+  const { username, password} = req.body;
 
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
@@ -243,29 +229,6 @@ app.get('/api/paises', authMiddleware, async (req, res, next) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM pais');
     res.json(rows);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Endpoint para tener la respuesta de un usuario
-app.get('/api/usuarios/:id/respuestas/:idcuestionario', authMiddleware, async (req, res, next) => {
-  const { id, idcuestionario } = req.params;
-  try {
-    const query = `
-        SELECT pregunta.pregunta, answer.answer
-        FROM respuesta
-        JOIN pregunta ON respuesta.idpregunta = pregunta.id
-        JOIN answer ON respuesta.idanswer = answer.idanswer
-        WHERE respuesta.idusuario = ? AND respuesta.idcuestionario = ?;
-      `;
-
-    const [rows] = await pool.execute(query, [id, idcuestionario]);
-    if (rows.length > 0) {
-      res.json(rows);
-    } else {
-      res.status(404).json({ message: "No se encontraron respuestas para este usuario y cuestionario." });
-    }
   } catch (error) {
     next(error);
   }
