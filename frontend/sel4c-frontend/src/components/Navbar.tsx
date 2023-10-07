@@ -17,6 +17,7 @@ const Navbar: React.FC = () => {
   const [searchText1, setSearchText1] = useState("");
   const [searchText2, setSearchText2] = useState("");
   const [searchText3, setSearchText3] = useState("");
+  
 
   return (
     <AppBar position="static" style={{ backgroundColor: "navy" }}>

@@ -15,12 +15,18 @@ import { Pais } from "../interface/Pais";
 import TextField from "@mui/material/TextField";
 import { Slider } from "@mui/material";
 
+
 interface FilterComponentProps {
   filters: {
     nombre_pais: string;
     disciplina: string;
     grado_academico: string;
     nombre_institucion: string;
+    minEdad: number;
+    maxEdad: number;
+    nombre: string;
+    apellido: string;
+    email: string;
   };
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -28,6 +34,11 @@ interface FilterComponentProps {
       disciplina: string;
       grado_academico: string;
       nombre_institucion: string;
+      minEdad: number;
+      maxEdad: number;
+      nombre: string;
+      apellido: string;
+      email: string;
     }>
   >;
 }
@@ -38,6 +49,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 }) => {
   const [instituciones, setInstituciones] = useState<Institucion[]>([]);
   const [paises, setPaises] = useState<Pais[]>([]);
+
 
   useEffect(() => {
     const loadData = async () => {
@@ -67,9 +79,30 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 
   const [value, setValue] = React.useState<number[]>([20, 37]);
 
-  const handleChange = (event: Event, newValue: number | number[]) => {
-    setValue(newValue as number[]);
+  const handleSliderChange = (event: Event, newValue: number[] | number, activeThumb: number) => {
+    if (Array.isArray(newValue)) {
+      setValue(newValue);
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        minEdad: newValue[0],
+        maxEdad: newValue[1]
+      }));
+    }
   };
+
+  const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(event.target.value);
+    const name = event.target.name;
+
+    if (name === "minEdad") {
+      setValue([newValue, value[1]]);
+      setFilters(prevFilters => ({ ...prevFilters, minEdad: newValue }));
+    } else if (name === "maxEdad") {
+      setValue([value[0], newValue]);
+      setFilters(prevFilters => ({ ...prevFilters, maxEdad: newValue }));
+    }
+  };
+
 
   const handleFilterChange = (
     event: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
@@ -153,35 +186,61 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           />
         </div>
       </div>
+      <div style={{alignItems: "center" }}>
+      <Typography variant="h6" style={wordLabelStyle}>Nombre:</Typography>
+        <TextField
+          value={filters.nombre || ""}
+          onChange={e => setFilters({ ...filters, nombre: e.target.value })}
+          style={textboxStyle}
+        />
+
+        <Typography variant="h6" style={wordLabelStyle}>Apellido:</Typography>
+        <TextField
+          value={filters.apellido || ""}
+          onChange={e => setFilters({ ...filters, apellido: e.target.value })}
+          style={textboxStyle}
+        />
+
+        <Typography variant="h6" style={wordLabelStyle}>Correo:</Typography>
+        <TextField
+          value={filters.email || ""}
+          onChange={e => setFilters({ ...filters, email: e.target.value })}
+          style={textboxStyle}
+        />
+      </div>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Typography variant="h6" style={wordLabelStyle}>
           Edad:
         </Typography>
         <TextField
           label={<Typography style={optionLabelStyle}></Typography>}
+          value={filters.minEdad || 0}
           variant="outlined"
           type="number"
           name="minAge" // Use a unique name for each TextField
           inputProps={{ min: "0" }} // Set the minimum value to 0
           style={textboxStyle}
+          onChange={handleTextFieldChange}
         />
         <Typography variant="h6" style={wordLabelStyle}>
           -
         </Typography>
         <TextField
           label={<Typography style={optionLabelStyle}></Typography>}
+          value={filters.maxEdad || 0}
           variant="outlined"
           type="number"
           name="maxAge" // Use a unique name for each TextField
           inputProps={{ min: "0" }} // Set the minimum value to 0
           style={textboxStyle}
+          onChange={handleTextFieldChange}
         />
       </div>
       <Slider
-        getAriaLabel={() => "Temperature range"}
+        getAriaLabel={() => "Rango de edades"}
         //valueLabelDisplay="auto"
         value={value}
-        onChange={handleChange}
+        onChange={handleSliderChange}
         style={{
           width: "250px",
           marginTop: "30px",

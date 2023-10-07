@@ -1,19 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { User } from '../interface/User';
 import { UserFormModal } from './UserFormModal';
-import FilterComponent from './FilterComponent';
 import { useNavigate, Link } from 'react-router-dom';
 
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Button } from '@mui/material';
 import { fetchUsersWithFilters, addUser, updateUser, deleteUser } from '../services/User.services';
 import TablePagination from '@mui/material/TablePagination';
-import UserProfile from './UserProfile';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LogoutButton from './LogoutButton';
 
-export const UserTable: React.FC = () => {
+type FiltersType = {
+    nombre_pais: string;
+    disciplina: string;
+    grado_academico: string;
+    nombre_institucion: string;
+    minEdad: number;
+    maxEdad: number;
+    nombre: string;
+    apellido: string;
+    email: string;
+  };
+
+  interface UserTableProps {
+    filters: FiltersType;
+    setFilters: React.Dispatch<React.SetStateAction<FiltersType>>;
+}
+  
+
+export const UserTable: React.FC<UserTableProps> = ({ filters, setFilters }) => {
     const [users, setUsers] = useState<User[]>([]);
     const [sortedUsers, setSortedUsers] = useState<User[]>([]);
     const [sortConfig, setSortConfig] = useState<{ key: keyof User, direction: string } | null>(null);
@@ -31,13 +47,6 @@ export const UserTable: React.FC = () => {
     const handleRowClick = (user: User) => {
         navigate(`/perfil/${user.id}`, { replace: true });
     };
-
-    const [filters, setFilters] = useState({
-        nombre_pais: '',
-        disciplina: '',
-        grado_academico: '',
-        nombre_institucion: ''
-    });
 
     useEffect(() => {
         const loadUsers = async () => {
@@ -127,7 +136,6 @@ export const UserTable: React.FC = () => {
 
     return (
         <div>
-            <FilterComponent filters={filters} setFilters={setFilters} />
             <h2>Usuarios</h2>
             <Button variant="contained" color="primary" onClick={() => setIsAddingUser(true)}>
                 Añadir Usuario
