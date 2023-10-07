@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { User } from '../interface/User';
 import { UserFormModal } from './UserFormModal';
 import FilterComponent from './FilterComponent';
-import { useNavigate, Link } from 'react-router-dom';
 
 import { Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Button } from '@mui/material';
 import { fetchUsersWithFilters, addUser, updateUser, deleteUser } from '../services/User.services';
@@ -26,18 +25,14 @@ export const UserTable: React.FC = () => {
 
     const displayedUsers = sortedUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-    const navigate = useNavigate();
-
-    const handleRowClick = (user: User) => {
-        navigate(`/perfil/${user.id}`, { replace: true });
-    };
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     const [filters, setFilters] = useState({
         nombre_pais: '',
         disciplina: '',
         grado_academico: '',
         nombre_institucion: ''
-    });
+    });    
 
     useEffect(() => {
         const loadUsers = async () => {
@@ -109,6 +104,10 @@ export const UserTable: React.FC = () => {
         }
     };
 
+    if (selectedUser) {
+        return <UserProfile user={selectedUser} />;
+    }
+
     const handleEditUser = async (user: User) => {
         try {
             const updatedUser = await updateUser(user);
@@ -125,7 +124,7 @@ export const UserTable: React.FC = () => {
 
 
     return (
-        <div>
+        <div>            
             <FilterComponent filters={filters} setFilters={setFilters} />
             <h2>Usuarios</h2>
             <Button variant="contained" color="primary" onClick={() => setIsAddingUser(true)}>
@@ -242,7 +241,7 @@ export const UserTable: React.FC = () => {
                 </TableHead>
                 <TableBody>
                     {displayedUsers.map((user) => (
-                        <TableRow key={user.id} onClick={() => handleRowClick(user)}>
+                        <TableRow key={user.id}>
                             <TableCell>{user.nombre}</TableCell>
                             <TableCell>{user.apellido}</TableCell>
                             <TableCell>{user.email}</TableCell>
@@ -252,22 +251,10 @@ export const UserTable: React.FC = () => {
                             <TableCell>{user.grado_academico}</TableCell>
                             <TableCell>{user.nombre_institucion}</TableCell>
                             <TableCell>{user.nombre_pais}</TableCell>
-
+                            
                             <TableCell>
-                                <EditIcon
-                                    onClick={(event) => {
-                                        event.stopPropagation(); // Detiene la propagación del evento
-                                        setEditingUser(user);
-                                    }}
-                                    style={{ cursor: 'pointer', marginRight: '10px' }}
-                                />
-                                <DeleteIcon
-                                    onClick={(event) => {
-                                        event.stopPropagation(); // Detiene la propagación del evento
-                                        handleDeleteUser(user.id!);
-                                    }}
-                                    style={{ cursor: 'pointer' }}
-                                />
+                                <EditIcon onClick={() => setEditingUser(user)} style={{ cursor: 'pointer', marginRight: '10px' }} />
+                                <DeleteIcon onClick={() => handleDeleteUser(user.id!)} style={{ cursor: 'pointer' }} />
                             </TableCell>
                         </TableRow>
                     ))}
