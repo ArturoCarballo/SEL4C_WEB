@@ -1,20 +1,15 @@
 import React from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-interface PrivateRouteProps {
-    component: React.ComponentType<any>;
-}
-
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component }) => {
+const PrivateRoute: React.FC = () => {
     const isAuthenticated = localStorage.getItem('admin_token');
-    const navigate = useNavigate();
 
     if (!isAuthenticated) {
-        navigate("/login");
-        return null;
+        return <Navigate to="/login" />;
     }
 
-    return <Component />;
+    return <Outlet />;
 }
 
 export default PrivateRoute;
