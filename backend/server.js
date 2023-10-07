@@ -144,6 +144,22 @@ app.post('/api/usuarios', authMiddleware, async (req, res, next) => {
   }
 });
 
+// Endpoint para añadir un nuevo usuario en xcode
+app.post('/api/usuarios/xcode', async (req, res, next) => {
+  const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password } = req.body;
+
+  const [rows] = await pool.execute('SELECT id FROM pais WHERE nombre_pais = ?', [pais]);
+
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+  try {
+    const [result] = await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, rows[0].id, hashedPassword]);
+    res.status(201).json({ id: result.insertId });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Endpoint para actualizar un usuario
 app.put('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
@@ -154,6 +170,27 @@ app.put('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
     await pool.execute(
       'UPDATE usuario SET apellido = ?, disciplina = ?, email = ?, edad = ?, sexo = ?, grado_academico = ?, institucion = ?, nombre = ?, pais = ?, password = ? WHERE id = ?',
       [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, hashedPassword, id] // <-- Nota el orden aquí
+    );
+
+    const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
+    const updatedUser = rows[0];
+    res.status(200).json(updatedUser)
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para actualizar un usuario en xcode
+app.put('/api/usuarios/:id/xcode', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+  const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais} = req.body;
+
+  const [rows] = await pool.execute('SELECT id FROM pais WHERE nombre_pais = ?', [pais]);
+
+  try {
+    await pool.execute(
+      'UPDATE usuario SET apellido = ?, disciplina = ?, email = ?, edad = ?, sexo = ?, grado_academico = ?, institucion = ?, nombre = ?, pais = ? WHERE id = ?',
+      [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, rows[0].id, id]
     );
 
     const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
@@ -191,6 +228,44 @@ app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   }
 });
 
+// Endpoint para eliminar un usuario en xcode
+app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+  const { password } = req.body;
+
+  // Verifica el usuario y la contraseña
+  const [usuario] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
+
+  if (!usuario || !bcrypt.compareSync(password, usuario[0].password)) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  try {
+    await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
+    res.status(200).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para iniciar sesion como usuario
+app.post('/api/usuarios/login', async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // Verifica el usuario y la contraseña
+  const [usuario] = await pool.execute('SELECT * FROM usuario WHERE email = ?', [email]);
+
+  if (!usuario || !bcrypt.compareSync(password, usuario[0].password)) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  // Genera un token JWT
+  const token = jwt.sign({ id: usuario[0].id }, process.env.SECRET_KEY, {
+    expiresIn: 86400 // 24 horas
+  });
+  res.json({ auth: true, token: token, id: usuario[0].id });
+});
+
 // Endpoint para iniciar sesion como admin
 app.post('/api/admin/login', async (req, res, next) => {
   const { username, password } = req.body;
@@ -207,11 +282,6 @@ app.post('/api/admin/login', async (req, res, next) => {
     expiresIn: 86400 // 24 horas
   });
   res.json({ auth: true, token: token });
-});
-
-// Endpoint para logout
-app.get('/api/admin/logout', (req, res) => {
-  res.status(200).send({ auth: false, token: null });
 });
 
 // Endpoint para preguntas
@@ -288,6 +358,7 @@ app.get('/api/paises', authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
 
 // Endpoint para tener la respuesta de un usuario
 app.get('/api/usuarios/:id/respuestas/:idcuestionario', authMiddleware, async (req, res, next) => {
