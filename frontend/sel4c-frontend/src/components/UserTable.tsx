@@ -11,6 +11,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LogoutButton from './LogoutButton';
 
+import FilterComponent from './FilterComponent';
+
 type FiltersType = {
     nombre_pais: string;
     disciplina: string;
@@ -136,8 +138,12 @@ export const UserTable: React.FC<UserTableProps> = ({ filters, setFilters }) => 
 
 
     return (
-        <div>
-            <h2>Usuarios</h2>
+    <div style={{ display: 'flex' }}>
+          <div style={{ flex: 1, marginRight: '20px' }}>
+            <FilterComponent filters={filters} setFilters={setFilters} />
+        </div>
+    <div style={{ flex: 2 }}>
+        <h2>Usuarios</h2>
             <Button variant="contained" color="primary" onClick={() => setIsAddingUser(true)}>
                 Añadir Usuario
             </Button>
@@ -293,6 +299,7 @@ export const UserTable: React.FC<UserTableProps> = ({ filters, setFilters }) => 
                 labelRowsPerPage="Usuarios por página:"
             />
             <LogoutButton></LogoutButton>
+        </div>
         </div>
     );
 }
