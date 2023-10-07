@@ -32,7 +32,7 @@ function Login() {
   const [password, setPassword] = useState("");
 
   const pageStyle = {
-    background: "linear-gradient(to bottom, #021B79, #ffffff)",
+    background: "linear-gradient(to bottom, #051952, #92b9f7)",
     height: "100vh",
     display: "flex",
     justifyContent: "center",
