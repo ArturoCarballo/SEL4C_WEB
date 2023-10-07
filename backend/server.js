@@ -252,10 +252,14 @@ app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
 app.post('/api/usuarios/login', async (req, res, next) => {
   const { email, password } = req.body;
 
+  console.log(password);
+
   // Verifica el usuario y la contraseña
   const [usuario] = await pool.execute('SELECT * FROM usuario WHERE email = ?', [email]);
 
-  if (!usuario || !bcrypt.compareSync(password, usuario[0].password)) {
+  console.log(usuario);
+
+  if (usuario == "" || !bcrypt.compareSync(password, usuario[0].password)) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
