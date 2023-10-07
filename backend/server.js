@@ -46,9 +46,19 @@ function authMiddleware(req, res, next) {
 app.use(express.json());
 
 
-// Endpoint para obtener todos los alumnos
+// Endpoint para obtener todos los usuarios
 app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
-  const { nombre_pais, disciplina, grado_academico, nombre_institucion, minEdad, maxEdad } = req.query;
+  const { 
+    nombre_pais, 
+    disciplina, 
+    grado_academico, 
+    nombre_institucion, 
+    minEdad, 
+    maxEdad, 
+    nombre, 
+    apellido, 
+    email 
+  } = req.query;
 
   let query = `
     SELECT usuario.*, institucion.nombre_institucion, pais.nombre_pais 
@@ -58,20 +68,61 @@ app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
     WHERE 1=1
   `;
 
-  if (nombre_pais && nombre_pais !== "") query += ' AND pais.nombre_pais = ?';
-  if (disciplina && disciplina !== "") query += ' AND usuario.disciplina = ?';
-  if (grado_academico && grado_academico !== "") query += ' AND usuario.grado_academico = ?';
-  if (nombre_institucion && nombre_institucion !== "") query += ' AND institucion.nombre_institucion = ?';
-  if (minEdad) query += ' AND usuario.edad >= ?';
-  if (maxEdad) query += ' AND usuario.edad <= ?';
+  let params = [];
+
+  if (nombre_pais && nombre_pais !== "") {
+    query += ' AND pais.nombre_pais = ?';
+    params.push(nombre_pais);
+  }
+
+  if (disciplina && disciplina !== "") {
+    query += ' AND usuario.disciplina = ?';
+    params.push(disciplina);
+  }
+
+  if (grado_academico && grado_academico !== "") {
+    query += ' AND usuario.grado_academico = ?';
+    params.push(grado_academico);
+  }
+
+  if (nombre_institucion && nombre_institucion !== "") {
+    query += ' AND institucion.nombre_institucion = ?';
+    params.push(nombre_institucion);
+  }
+
+  if (minEdad) {
+    query += ' AND usuario.edad >= ?';
+    params.push(minEdad);
+  }
+
+  if (maxEdad) {
+    query += ' AND usuario.edad <= ?';
+    params.push(maxEdad);
+  }
+
+  if (nombre && nombre !== "") {
+    query += ' AND usuario.nombre LIKE ?';
+    params.push(`%${nombre}%`);
+  }
+
+  if (apellido && apellido !== "") {
+    query += ' AND usuario.apellido LIKE ?';
+    params.push(`%${apellido}%`);
+  }
+
+  if (email && email !== "") {
+    query += ' AND usuario.email LIKE ?';
+    params.push(`%${email}%`);
+  }
 
   try {
-    const [rows] = await pool.execute(query, [nombre_pais, disciplina, grado_academico, nombre_institucion,  minEdad, maxEdad].filter(Boolean));
+    const [rows] = await pool.execute(query, params);
     res.json(rows);
   } catch (error) {
     next(error);
   }
 });
+
 
 // Endpoint para añadir un nuevo usuario
 app.post('/api/usuarios', authMiddleware, async (req, res, next) => {

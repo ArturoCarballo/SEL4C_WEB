@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login/Login';
-import { UserTable } from './components/UserTable';
+import Usuarios from './pages/Usuarios';
 import { AdminTable } from './components/AdminTable';
 import UserProfile from './components/UserProfile';
 import Navbar from './components/Navbar';
+import { ReactElement } from 'react';
 
 function MainApp() {
     const location = useLocation();
@@ -17,7 +18,7 @@ function MainApp() {
             <Routes>
                 <Route path="/" element={<PrivateRoute />}>
                     <Route path="/perfil/:id" element={<UserProfile />} />
-                    <Route path="/users" element={<UserTable />} />
+                    <Route path="/users" element={<Usuarios />} />
                     <Route path="/admins" element={<AdminTable />} />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Route>

@@ -24,6 +24,9 @@ interface FilterComponentProps {
     nombre_institucion: string;
     minEdad: number;
     maxEdad: number;
+    nombre: string;
+    apellido: string;
+    correo: string;
   };
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -33,6 +36,9 @@ interface FilterComponentProps {
       nombre_institucion: string;
       minEdad: number;
       maxEdad: number;
+      nombre: string;
+      apellido: string;
+      correo: string;
     }>
   >;
 }
@@ -75,27 +81,27 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 
   const handleSliderChange = (event: Event, newValue: number[] | number, activeThumb: number) => {
     if (Array.isArray(newValue)) {
-        setValue(newValue); 
-        setFilters(prevFilters => ({
-            ...prevFilters,
-            minEdad: newValue[0],
-            maxEdad: newValue[1]
-        })); 
+      setValue(newValue);
+      setFilters(prevFilters => ({
+        ...prevFilters,
+        minEdad: newValue[0],
+        maxEdad: newValue[1]
+      }));
     }
-};
-  
-const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const newValue = parseInt(event.target.value);
-  const name = event.target.name;
+  };
 
-  if (name === "minEdad") {
+  const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(event.target.value);
+    const name = event.target.name;
+
+    if (name === "minEdad") {
       setValue([newValue, value[1]]);
       setFilters(prevFilters => ({ ...prevFilters, minEdad: newValue }));
-  } else if (name === "maxEdad") {
+    } else if (name === "maxEdad") {
       setValue([value[0], newValue]);
       setFilters(prevFilters => ({ ...prevFilters, maxEdad: newValue }));
-  }
-};
+    }
+  };
 
 
   const handleFilterChange = (
@@ -179,6 +185,28 @@ const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
             }
           />
         </div>
+      </div>
+      <div style={{alignItems: "center" }}>
+      <Typography variant="h6" style={wordLabelStyle}>Nombre:</Typography>
+        <TextField
+          value={filters.nombre || ""}
+          onChange={e => setFilters({ ...filters, nombre: e.target.value })}
+          style={textboxStyle}
+        />
+
+        <Typography variant="h6" style={wordLabelStyle}>Apellido:</Typography>
+        <TextField
+          value={filters.apellido || ""}
+          onChange={e => setFilters({ ...filters, apellido: e.target.value })}
+          style={textboxStyle}
+        />
+
+        <Typography variant="h6" style={wordLabelStyle}>Correo:</Typography>
+        <TextField
+          value={filters.correo || ""}
+          onChange={e => setFilters({ ...filters, correo: e.target.value })}
+          style={textboxStyle}
+        />
       </div>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Typography variant="h6" style={wordLabelStyle}>
