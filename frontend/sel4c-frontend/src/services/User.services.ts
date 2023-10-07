@@ -20,6 +20,8 @@ export const fetchUsersWithFilters = async (filters: any): Promise<User[]> => {
 
     // 1. Construye la cadena de consulta
     const queryString = new URLSearchParams(filters).toString();
+
+    console.log("Token: " + token)
     
     const response = await fetch(`/api/usuarios?${queryString}`, {
         method: "GET",
@@ -74,17 +76,4 @@ export const deleteUser = async (id: number): Promise<void> => {
         }
     });
     if (!response.ok) throw new Error('Error deleting user');
-}
-
-export const getUserById = async (id: number): Promise<User> => {
-    const token = localStorage.getItem("admin_token");
-
-    const response = await fetch(`${API_BASE}/${id}`, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token}` : ''
-        }
-    });
-    if (!response.ok) throw new Error('Error fetching user by ID');
-    return response.json();
 }
