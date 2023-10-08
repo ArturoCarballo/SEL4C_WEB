@@ -15,7 +15,6 @@ import { Pais } from "../interface/Pais";
 import TextField from "@mui/material/TextField";
 import { Slider } from "@mui/material";
 
-
 interface FilterComponentProps {
   filters: {
     nombre_pais: string;
@@ -55,17 +54,18 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
     hombre: true, // defaultChecked
     mujer: true, // defaultChecked
     noBinarie: true, // defaultChecked
-    prefieroNoDecir: true // defaultChecked
+    prefieroNoDecir: true, // defaultChecked
   });
 
-  const handleSexoChange = (sexoType: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    if(event.target.checked) {
-        setFilters(prev => ({ ...prev, sexo: sexoType }));
-    } else {
+  const handleSexoChange =
+    (sexoType: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.checked) {
+        setFilters((prev) => ({ ...prev, sexo: sexoType }));
+      } else {
         // Uncheck. This is a simplified behavior. In reality, you might want to reset to a default or "all" value.
-        setFilters(prev => ({ ...prev, sexo: '' }));
-    }
-};
+        setFilters((prev) => ({ ...prev, sexo: "" }));
+      }
+    };
 
   useEffect(() => {
     const loadData = async () => {
@@ -93,32 +93,37 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
     loadData();
   }, []);
 
-  const [value, setValue] = React.useState<number[]>([20, 37]);
+  const [value, setValue] = React.useState<number[]>([0, 100]);
 
-  const handleSliderChange = (event: Event, newValue: number[] | number, activeThumb: number) => {
+  const handleSliderChange = (
+    event: Event,
+    newValue: number[] | number,
+    activeThumb: number
+  ) => {
     if (Array.isArray(newValue)) {
       setValue(newValue);
-      setFilters(prevFilters => ({
+      setFilters((prevFilters) => ({
         ...prevFilters,
         minEdad: newValue[0],
-        maxEdad: newValue[1]
+        maxEdad: newValue[1],
       }));
     }
   };
 
-  const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const newValue = parseInt(event.target.value);
     const name = event.target.name;
 
     if (name === "minEdad") {
       setValue([newValue, value[1]]);
-      setFilters(prevFilters => ({ ...prevFilters, minEdad: newValue }));
+      setFilters((prevFilters) => ({ ...prevFilters, minEdad: newValue }));
     } else if (name === "maxEdad") {
       setValue([value[0], newValue]);
-      setFilters(prevFilters => ({ ...prevFilters, maxEdad: newValue }));
+      setFilters((prevFilters) => ({ ...prevFilters, maxEdad: newValue }));
     }
   };
-
 
   const handleFilterChange = (
     event: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
@@ -133,25 +138,24 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 
   // Define the inline style for the individual form controls
   const textboxStyle: React.CSSProperties = {
-    width: "85px",
+    width: "100%",
     backgroundColor: "#dfecff",
+    borderColor: "transparent",
   };
 
   const autofillStyle: React.CSSProperties = {
-    width: "255px",
-    height: "55px",
+    width: "100%",
+    height: "50px",
     backgroundColor: "#dfecff",
-    marginLeft: "20px",
   };
   const wordLabelStyle: React.CSSProperties = {
     fontWeight: "bold",
     color: "navy",
-    margin: "10px",
+    fontSize: "25px",
     marginTop: "20px",
   };
   const optionLabelStyle: React.CSSProperties = {
     color: "navy",
-    margin: "0px",
   };
 
   const checkedCheckboxStyle: React.CSSProperties = {
@@ -164,7 +168,10 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 
   return (
     <div>
-      <Typography variant="h6" style={wordLabelStyle}>
+      <Typography
+        variant="h6"
+        style={{ fontWeight: "bold", color: "navy", fontSize: "25px" }}
+      >
         Sexo:
       </Typography>
       <div>
@@ -173,10 +180,10 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           <FormControlLabel
             style={{ marginLeft: "15px" }}
             control={
-              <Checkbox 
-                style={checkedCheckboxStyle} 
-                checked={filters.sexo === 'Masculino'}
-                onChange={handleSexoChange('Masculino')}
+              <Checkbox
+                style={checkedCheckboxStyle}
+                checked={filters.sexo === "Masculino"}
+                onChange={handleSexoChange("Masculino")}
               />
             }
             label={<Typography style={optionLabelStyle}>Hombre</Typography>}
@@ -186,10 +193,10 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           <FormControlLabel
             style={{ marginLeft: "15px" }}
             control={
-              <Checkbox 
-                style={checkedCheckboxStyle} 
-                checked={filters.sexo === 'Femenino'}
-                onChange={handleSexoChange('Femenino')}
+              <Checkbox
+                style={checkedCheckboxStyle}
+                checked={filters.sexo === "Femenino"}
+                onChange={handleSexoChange("Femenino")}
               />
             }
             label={<Typography style={optionLabelStyle}>Mujer</Typography>}
@@ -199,55 +206,47 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           <FormControlLabel
             style={{ marginLeft: "15px" }}
             control={
-              <Checkbox 
-                style={checkedCheckboxStyle} 
-                checked={filters.sexo === 'No binario'}
-                onChange={handleSexoChange('No binario')}
+              <Checkbox
+                style={checkedCheckboxStyle}
+                checked={filters.sexo === "No binario"}
+                onChange={handleSexoChange("No binario")}
               />
             }
-            label={<Typography style={optionLabelStyle}>No binario  </Typography>}
+            label={
+              <Typography style={optionLabelStyle}>No binarie </Typography>
+            }
           />
         </div>
         <div style={optionContainerStyle}>
           <FormControlLabel
             style={{ marginLeft: "15px" }}
             control={
-              <Checkbox 
-                style={checkedCheckboxStyle} 
-                checked={filters.sexo === 'Prefiero no decir'}
-                onChange={handleSexoChange('Prefiero no decir')}
+              <Checkbox
+                style={checkedCheckboxStyle}
+                checked={filters.sexo === "Prefiero no decir"}
+                onChange={handleSexoChange("Prefiero no decir")}
               />
             }
-            label={<Typography style={optionLabelStyle}>Prefiero no decir</Typography>}
+            label={
+              <Typography style={optionLabelStyle}>
+                Prefiero no decir
+              </Typography>
+            }
           />
         </div>
       </div>
-      <div style={{ alignItems: "center" }}>
-        <Typography variant="h6" style={wordLabelStyle}>Nombre:</Typography>
-        <TextField
-          value={filters.nombre || ""}
-          onChange={e => setFilters({ ...filters, nombre: e.target.value })}
-          style={textboxStyle}
-        />
-
-        <Typography variant="h6" style={wordLabelStyle}>Apellido:</Typography>
-        <TextField
-          value={filters.apellido || ""}
-          onChange={e => setFilters({ ...filters, apellido: e.target.value })}
-          style={textboxStyle}
-        />
-
-        <Typography variant="h6" style={wordLabelStyle}>Correo:</Typography>
-        <TextField
-          value={filters.email || ""}
-          onChange={e => setFilters({ ...filters, email: e.target.value })}
-          style={textboxStyle}
-        />
-      </div>
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div>
         <Typography variant="h6" style={wordLabelStyle}>
-          Edad:
-        </Typography>
+          Edades:
+        </Typography>{" "}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
         <TextField
           label={<Typography style={optionLabelStyle}></Typography>}
           value={filters.minEdad || 0}
@@ -258,7 +257,15 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           style={textboxStyle}
           onChange={handleTextFieldChange}
         />
-        <Typography variant="h6" style={wordLabelStyle}>
+        <Typography
+          variant="h6"
+          style={{
+            marginInline: "15px",
+            color: "navy",
+            fontWeight: "bold",
+            fontSize: "25px",
+          }}
+        >
           -
         </Typography>
         <TextField
@@ -272,26 +279,27 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           onChange={handleTextFieldChange}
         />
       </div>
-      <Slider
-        getAriaLabel={() => "Rango de edades"}
+      <Slider //que empiece en
+        getAriaLabel={() => "Edades"}
         //valueLabelDisplay="auto"
         value={value}
         onChange={handleSliderChange}
         style={{
-          width: "250px",
-          marginTop: "30px",
-          marginLeft: "20px",
+          marginLeft: "30px",
+          marginTop: "15px",
           color: "navy",
+          width: "75%",
         }}
       />
       {/*Filtros por selector*/}
       <Typography variant="h6" style={wordLabelStyle}>
         País:
       </Typography>
-      <div style={autofillStyle}>
+      <div>
         <FormControl fullWidth variant="outlined">
           <InputLabel id="pais-label"></InputLabel>
           <Select
+            style={autofillStyle}
             labelId="pais-label"
             id="nombre_pais"
             name="nombre_pais"
@@ -310,10 +318,11 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
       <Typography variant="h6" style={wordLabelStyle}>
         Disciplina:
       </Typography>
-      <div style={autofillStyle}>
+      <div>
         <FormControl variant="outlined" fullWidth>
           <InputLabel id="disciplina-label"></InputLabel>
           <Select
+            style={autofillStyle}
             labelId="disciplina-label"
             id="disciplina"
             name="disciplina"
@@ -327,18 +336,14 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             <MenuItem value={"Humanidades y Educacion"}>
               Humanidades y Educación
             </MenuItem>
-            <MenuItem value={"Ciencias Sociales"}>
-              Ciencias Sociales
-            </MenuItem>
+            <MenuItem value={"Ciencias Sociales"}>Ciencias Sociales</MenuItem>
             <MenuItem value={"Ciencias de la Salud"}>
               Ciencias de la Salud
             </MenuItem>
             <MenuItem value={"Arquitectura Arte y Diseño"}>
               Arquitectura Arte y Diseño
             </MenuItem>
-            <MenuItem value={"Negocios"}>
-              Negocios
-            </MenuItem>
+            <MenuItem value={"Negocios"}>Negocios</MenuItem>
             {/* ... otros valores de disciplina ... */}
           </Select>
         </FormControl>
@@ -346,10 +351,11 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
       <Typography variant="h6" style={wordLabelStyle}>
         Grado Académico:
       </Typography>
-      <div style={autofillStyle}>
+      <div>
         <FormControl variant="outlined" fullWidth>
           <InputLabel id="grado_academico-label"></InputLabel>
           <Select
+            style={autofillStyle}
             labelId="grado_academico-label"
             id="grado_academico"
             name="grado_academico"
@@ -366,10 +372,11 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
       <Typography variant="h6" style={wordLabelStyle}>
         Institución:
       </Typography>
-      <div style={autofillStyle}>
+      <div>
         <FormControl variant="outlined" fullWidth>
-          <InputLabel id="nombre_institucion-label">Institucion</InputLabel>
+          <InputLabel id="nombre_institucion-label"></InputLabel>
           <Select
+            style={autofillStyle}
             labelId="nombre_institucion-label"
             id="nombre_institucion"
             name="nombre_institucion"
@@ -388,6 +395,34 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           </Select>
         </FormControl>
       </div>
+      {/* <div style={{ alignItems: "center" }}>
+        <Typography variant="h6" style={wordLabelStyle}>
+          Nombre:
+        </Typography>
+        <TextField
+          value={filters.nombre || ""}
+          onChange={(e) => setFilters({ ...filters, nombre: e.target.value })}
+          style={textboxStyle}
+        />
+
+        <Typography variant="h6" style={wordLabelStyle}>
+          Apellido:
+        </Typography>
+        <TextField
+          value={filters.apellido || ""}
+          onChange={(e) => setFilters({ ...filters, apellido: e.target.value })}
+          style={textboxStyle}
+        />
+
+        <Typography variant="h6" style={wordLabelStyle}>
+          Correo:
+        </Typography>
+        <TextField
+          value={filters.email || ""}
+          onChange={(e) => setFilters({ ...filters, email: e.target.value })}
+          style={textboxStyle}
+        />
+      </div>*/}
     </div>
   );
 };
