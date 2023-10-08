@@ -149,7 +149,7 @@ app.post('/api/usuarios/xcode', async (req, res, next) => {
   const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password } = req.body;
 
   const [rows] = await pool.execute('SELECT id FROM pais WHERE nombre_pais = ?', [pais]);
-  const [instRows] = await pool.execute('SELECT id FROM institucion WHERE nombre_institucion = ?', [institucion]);
+  const [instRows] = await pool.execute('SELECT idinstitucion FROM institucion WHERE nombre_institucion = ?', [institucion]);
 
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
@@ -187,7 +187,7 @@ app.put('/api/usuarios/:id/xcode', authMiddleware, async (req, res, next) => {
   const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais} = req.body;
 
   const [paisRows] = await pool.execute('SELECT id FROM pais WHERE nombre_pais = ?', [pais]);
-  const [instRows] = await pool.execute('SELECT id FROM institucion WHERE nombre_institucion = ?', [institucion]);
+  const [instRows] = await pool.execute('SELECT idinstitucion FROM institucion WHERE nombre_institucion = ?', [institucion]);
 
   try {
     await pool.execute(
