@@ -154,7 +154,7 @@ app.post('/api/usuarios/xcode', async (req, res, next) => {
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
   try {
-    const [result] = await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, instRows[0].id, nombre, rows[0].id, hashedPassword]);
+    const [result] = await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, instRows[0].idinstitucion, nombre, rows[0].id, hashedPassword]);
     res.status(201).json({ id: result.insertId });
   } catch (error) {
     next(error);
