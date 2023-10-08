@@ -149,11 +149,12 @@ app.post('/api/usuarios/xcode', async (req, res, next) => {
   const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password } = req.body;
 
   const [rows] = await pool.execute('SELECT id FROM pais WHERE nombre_pais = ?', [pais]);
+  const [instRows] = await pool.execute('SELECT id FROM institucion WHERE nombre_institucion = ?', [institucion]);
 
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
   try {
-    const [result] = await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, rows[0].id, hashedPassword]);
+    const [result] = await pool.execute('INSERT INTO usuario (apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [apellido, disciplina, email, edad, sexo, grado_academico, instRows[0].id, nombre, rows[0].id, hashedPassword]);
     res.status(201).json({ id: result.insertId });
   } catch (error) {
     next(error);
@@ -185,12 +186,13 @@ app.put('/api/usuarios/:id/xcode', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
   const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais} = req.body;
 
-  const [rows] = await pool.execute('SELECT id FROM pais WHERE nombre_pais = ?', [pais]);
+  const [paisRows] = await pool.execute('SELECT id FROM pais WHERE nombre_pais = ?', [pais]);
+  const [instRows] = await pool.execute('SELECT id FROM institucion WHERE nombre_institucion = ?', [institucion]);
 
   try {
     await pool.execute(
       'UPDATE usuario SET apellido = ?, disciplina = ?, email = ?, edad = ?, sexo = ?, grado_academico = ?, institucion = ?, nombre = ?, pais = ? WHERE id = ?',
-      [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, rows[0].id, id]
+      [apellido, disciplina, email, edad, sexo, grado_academico, instRows[0].id, nombre, paisRows[0].id, id]
     );
 
     const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
