@@ -2,6 +2,7 @@ import { useState } from "react";
 import { UserTable } from "../components/UserTable";
 import FilterComponent from "../components/FilterComponent";
 import { Button } from "@mui/material";
+import Diagnostico from "../components/Diagnostico";
 
 const whiteLabelStyle: React.CSSProperties = {
   fontWeight: "bold",
@@ -69,6 +70,8 @@ const Usuarios: React.FC = () => {
     email: "",
     sexo: "",
   });
+
+  const [activeTab, setActiveTab] = useState('tabla');
   return (
     <div style={backgroundStyle}>
       <div style={filterframeStyle}>
@@ -76,11 +79,17 @@ const Usuarios: React.FC = () => {
       </div>
       <div style={whiteframeStyle}>
         <div style={tabbuttonStyle}>
-          <Button style={buttonStyle}>Diagnósticos</Button>
+          <Button style={buttonStyle} onClick={() => setActiveTab('diagnostico')}>Diagnósticos</Button>
           <Button style={buttonStyle}>Actividades</Button>
-          <Button style={buttonStyle}>Tabla</Button>
+          <Button style={buttonStyle} onClick={() => setActiveTab('tabla')}>Tabla</Button>
         </div>
-        <UserTable filters={filters} setFilters={setFilters} />
+        {
+          activeTab === 'tabla' ? 
+          <UserTable filters={filters} setFilters={setFilters} /> :
+          activeTab === 'diagnostico' ?
+          <Diagnostico /> : 
+          null
+        }
       </div>
     </div>
   );
