@@ -21,7 +21,7 @@ const backgroundStyle: React.CSSProperties = {
 
 const filterframeStyle: React.CSSProperties = {
   background: "white",
-  width: "400px",
+  maxWidth: "500px",
   flexDirection: "column",
   margin: "10px",
   borderRadius: "10px",

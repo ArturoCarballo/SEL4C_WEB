@@ -395,7 +395,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           </Select>
         </FormControl>
       </div>
-      {/* <div style={{ alignItems: "center" }}>
+      <div style={{ alignItems: "center" }}>
         <Typography variant="h6" style={wordLabelStyle}>
           Nombre:
         </Typography>
@@ -422,7 +422,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           onChange={(e) => setFilters({ ...filters, email: e.target.value })}
           style={textboxStyle}
         />
-      </div>*/}
+      </div>
     </div>
   );
 };
