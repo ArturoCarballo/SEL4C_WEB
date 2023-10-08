@@ -1,4 +1,12 @@
 import React, { useState } from "react";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  FormControlLabel,
+} from "@material-ui/core";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -12,26 +20,55 @@ const optionLabelStyle: React.CSSProperties = {
   fontStyle: "italic",
 };
 
+const autofillStyle: React.CSSProperties = {
+  width: "250px",
+  height: "50px",
+  backgroundColor: "#dfecff",
+};
+
 const Navbar: React.FC = () => {
   // Define and initialize the text input states
   const [searchText1, setSearchText1] = useState("");
   const [searchText2, setSearchText2] = useState("");
   const [searchText3, setSearchText3] = useState("");
-  
 
   return (
-    <AppBar position="static" style={{ backgroundColor: "navy" }}>
+    <AppBar
+      position="static"
+      style={{ backgroundColor: "#061e61", width: "100%" }}
+    >
       <Toolbar>
         {/* Logo / Brand Name (MiLogo) */}
         <img
-          src="/logo_blanco.png"
+          src="/logo_inicio.png"
           alt="Imagen de inicio de sesión"
-          style={{ width: "250px", margin: "20px" }}
+          style={{ width: "250px", margin: "10px", marginBottom: "0px" }}
         />
         {/* Text input boxes */}
         <div
           style={{ display: "flex", alignItems: "center", marginRight: "50px" }}
         >
+          <div>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel id="grado_academico-label">Nombre</InputLabel>
+              <Select
+                style={autofillStyle}
+                labelId="grado_academico-label"
+                id="grado_academico"
+                name="grado_academico"
+                //value={filters.grado_academico || ""}
+                //onChange={handleFilterChange}
+              >
+                {/*
+                <MenuItem value="">Todos</MenuItem>
+                <MenuItem value={"Pregrado"}>Pregrado</MenuItem>
+                <MenuItem value={"Posgrado"}>Posgrado</MenuItem>
+                <MenuItem value={"Educacion continua"}>
+                  Educacion continua
+  </MenuItem>*/}
+              </Select>
+            </FormControl>
+          </div>
           <TextField
             label={<Typography style={optionLabelStyle}>Nombre</Typography>}
             variant="outlined"

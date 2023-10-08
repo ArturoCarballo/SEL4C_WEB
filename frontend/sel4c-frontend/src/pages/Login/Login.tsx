@@ -73,9 +73,6 @@ function Login() {
   const textFieldStyle = {
     background: "#dfecff",
     marginBottom: "20px",
-    borderColor: "red", // Set the border color to red
-    borderWidth: "10px", // Optional: You can specify the border width if needed
-    borderRadius: "5px", // Optional: You can specify the border radius if needed
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
