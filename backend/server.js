@@ -396,9 +396,9 @@ app.get('/api/usuarios/:id/respuestas/:idcuestionario', authMiddleware, async (r
 });
 
 // Endpoint para tener la respuesta del cuestionario filtradas
-app.get('/api/respuestas/cuestionario', authMiddleware, async (req, res, next) => {
+app.get('/api/respuestas/cuestionario/:idcuestionario', authMiddleware, async (req, res, next) => {
+  const { idcuestionario } = req.params;
   const {
-    idcuestionario,
     nombre_pais,
     disciplina,
     grado_academico,
@@ -419,10 +419,11 @@ app.get('/api/respuestas/cuestionario', authMiddleware, async (req, res, next) =
   JOIN usuario ON respuesta.idusuario = usuario.id
   JOIN institucion ON usuario.institucion = institucion.idinstitucion
   JOIN pais ON usuario.pais = pais.id
-  WHERE respuesta.idcuestionario = ?;
+  WHERE respuesta.idcuestionario = ?
   `;
 
-  let params = [];
+  let params = [idcuestionario];
+
 
   if (nombre_pais && nombre_pais !== "") {
     query += ' AND pais.nombre_pais = ?';

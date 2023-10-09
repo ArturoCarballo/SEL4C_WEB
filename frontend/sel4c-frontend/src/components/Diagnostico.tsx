@@ -23,9 +23,10 @@ interface DiagnosticoProps {
 const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
     const [preguntas, setPreguntas] = useState<Preguntas[]>([]);
     useEffect(() => {
+        console.log(filters)
         const loadPreguntas = async () => {
             try {
-                const usersPreguntas= await fetchPreguntasWithFilters(filters);
+                const usersPreguntas= await fetchPreguntasWithFilters(1, filters);
                 setPreguntas(usersPreguntas);
             } catch (error) {
                 console.error("Error fetching preguntas: ", error);
