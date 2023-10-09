@@ -110,20 +110,26 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
     }
   };
 
-  const handleTextFieldChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newValue = parseInt(event.target.value);
+  const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
     const name = event.target.name;
 
-    if (name === "minEdad") {
-      setValue([newValue, value[1]]);
-      setFilters((prevFilters) => ({ ...prevFilters, minEdad: newValue }));
-    } else if (name === "maxEdad") {
-      setValue([value[0], newValue]);
-      setFilters((prevFilters) => ({ ...prevFilters, maxEdad: newValue }));
+    // Asegurarse de que el newValue contiene solo dígitos
+    if (!/^\d*$/.test(newValue)) {
+        return; // No actualizar el valor si no es un número
     }
-  };
+
+    const numberValue = parseInt(newValue, 10); // Convertir la cadena a número
+
+    if (name === "minEdad") {
+        setValue([numberValue, value[1]]);
+        setFilters((prevFilters) => ({ ...prevFilters, minEdad: numberValue }));
+    } else if (name === "maxEdad") {
+        setValue([value[0], numberValue]);
+        setFilters((prevFilters) => ({ ...prevFilters, maxEdad: numberValue }));
+    }
+};
+
 
   const handleFilterChange = (
     event: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
@@ -251,9 +257,9 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           label={<Typography style={optionLabelStyle}></Typography>}
           value={filters.minEdad || 0}
           variant="outlined"
-          type="number"
-          name="minAge" // Use a unique name for each TextField
-          inputProps={{ min: "0" }} // Set the minimum value to 0
+          type="text"
+          name="minEdad"
+          inputProps={{ pattern: "\\d*" }}
           style={textboxStyle}
           onChange={handleTextFieldChange}
         />
@@ -266,15 +272,14 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             fontSize: "25px",
           }}
         >
-          -
         </Typography>
         <TextField
           label={<Typography style={optionLabelStyle}></Typography>}
           value={filters.maxEdad || 0}
           variant="outlined"
-          type="number"
-          name="maxAge" // Use a unique name for each TextField
-          inputProps={{ min: "0" }} // Set the minimum value to 0
+          type="text"
+          name="maxEdad"
+          inputProps={{ pattern: "\\d*" }}
           style={textboxStyle}
           onChange={handleTextFieldChange}
         />
