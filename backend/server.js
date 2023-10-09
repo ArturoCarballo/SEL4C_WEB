@@ -228,6 +228,9 @@ app.get('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
 // Endpoint para eliminar un usuario
 app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
+
+  await pool.execute('DELETE FROM respuesta WHERE idusuario = ?', [id]);
+  await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
   try {
     await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
     res.status(200).send();
@@ -247,6 +250,10 @@ app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   if (!usuario || !bcrypt.compareSync(password, usuario[0].password)) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
+
+  await pool.execute('DELETE FROM respuesta WHERE idusuario = ?', [id]);
+  await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
+
 
   try {
     await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);

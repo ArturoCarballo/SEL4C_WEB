@@ -218,6 +218,19 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             control={
               <Checkbox
                 style={checkedCheckboxStyle}
+                checked={filters.sexo === ""}
+                onChange={handleSexoChange("")}
+              />
+            }
+            label={<Typography style={optionLabelStyle}>Todo</Typography>}
+          />
+        </div>
+        <div style={optionContainerStyle}>
+          <FormControlLabel
+            style={{ marginLeft: "15px" }}
+            control={
+              <Checkbox
+                style={checkedCheckboxStyle}
                 checked={filters.sexo === "Masculino"}
                 onChange={handleSexoChange("Masculino")}
               />
