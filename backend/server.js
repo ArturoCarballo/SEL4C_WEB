@@ -186,19 +186,10 @@ app.put('/api/usuarios/:id/xcode', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
   const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais } = req.body;
 
-  const [paisRows] = await pool.execute('SELECT id FROM pais WHERE nombre_pais = ?', [pais]);
-  if (!paisRows.length) {
-    return res.status(400).json({ error: "Pais no encontrado" });
-  }
-  const [instRows] = await pool.execute('SELECT idinstitucion FROM institucion WHERE nombre_institucion = ?', [institucion]);
-  if (!instRows.length) {
-    return res.status(400).json({ error: "Institucion no encontrada" });
-  }
-
   try {
     await pool.execute(
       'UPDATE usuario SET apellido = ?, disciplina = ?, email = ?, edad = ?, sexo = ?, grado_academico = ?, institucion = ?, nombre = ?, pais = ? WHERE id = ?',
-      [apellido, disciplina, email, edad, sexo, grado_academico, instRows[0].idinstitucion, nombre, paisRows[0].id, id]
+      [apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais, id]
     );
 
     const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
@@ -230,7 +221,7 @@ app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
 
   await pool.execute('DELETE FROM respuesta WHERE idusuario = ?', [id]);
-  await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
+  await pool.execute('DELETE FROM usuario WHERE id = ?', [id]); 
   try {
     await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
     res.status(200).send();
