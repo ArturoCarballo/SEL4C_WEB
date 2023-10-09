@@ -3,6 +3,7 @@ import { UserTable } from "../components/UserTable";
 import FilterComponent from "../components/FilterComponent";
 import { Button } from "@mui/material";
 import Diagnostico from "../components/Diagnostico";
+import Actividades from "../components/Actividades";
 
 const whiteLabelStyle: React.CSSProperties = {
   fontWeight: "bold",
@@ -80,14 +81,16 @@ const Usuarios: React.FC = () => {
       <div style={whiteframeStyle}>
         <div style={tabbuttonStyle}>
           <Button style={buttonStyle} onClick={() => setActiveTab('diagnostico')}>Diagnósticos</Button>
-          <Button style={buttonStyle}>Actividades</Button>
           <Button style={buttonStyle} onClick={() => setActiveTab('tabla')}>Tabla</Button>
+          <Button style={buttonStyle} onClick={() => setActiveTab('Actividades')}>Actividades</Button>
         </div>
         {
           activeTab === 'tabla' ? 
           <UserTable filters={filters} setFilters={setFilters} /> :
           activeTab === 'diagnostico' ?
           <Diagnostico /> : 
+          activeTab === 'Actividades' ?
+          <Actividades /> : 
           null
         }
       </div>
