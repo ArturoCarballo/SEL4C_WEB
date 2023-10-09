@@ -352,7 +352,7 @@ app.put('/api/admins/:id', authMiddleware, async (req, res, next) => {
 });
 
 // Endpoint para obtener todos los admins
-app.get('/api/instituciones', authMiddleware, async (req, res, next) => {
+app.get('/api/instituciones', async (req, res, next) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM institucion');
     res.json(rows);
@@ -362,7 +362,7 @@ app.get('/api/instituciones', authMiddleware, async (req, res, next) => {
 });
 
 // Endpoint para obtener todos los paises
-app.get('/api/paises', authMiddleware, async (req, res, next) => {
+app.get('/api/paises', async (req, res, next) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM pais');
     res.json(rows);
@@ -397,8 +397,9 @@ app.get('/api/usuarios/:id/respuestas/:idcuestionario', authMiddleware, async (r
 
 // Endpoint para tener la respuesta del cuestionario filtradas
 app.get('/api/respuestas/cuestionario/:idcuestionario', authMiddleware, async (req, res, next) => {
-  const { idcuestionario } = req.params;
+  const { idcuestionario} = req.params;
   const {
+    questionId,
     nombre_pais,
     disciplina,
     grado_academico,
@@ -412,17 +413,17 @@ app.get('/api/respuestas/cuestionario/:idcuestionario', authMiddleware, async (r
   } = req.query;
 
   let query = `
-  SELECT DISTINCT pregunta.*, answer.answer
+  SELECT DISTINCT pregunta.*, answer.answer, answer.idanswer
   FROM respuesta
   JOIN pregunta ON respuesta.idpregunta = pregunta.id
   JOIN answer ON respuesta.idanswer = answer.idanswer
   JOIN usuario ON respuesta.idusuario = usuario.id
   JOIN institucion ON usuario.institucion = institucion.idinstitucion
   JOIN pais ON usuario.pais = pais.id
-  WHERE respuesta.idcuestionario = ?
+  WHERE respuesta.idcuestionario = ? AND respuesta.idpregunta = ?
   `;
 
-  let params = [idcuestionario];
+  let params = [idcuestionario, questionId];
 
 
   if (nombre_pais && nombre_pais !== "") {

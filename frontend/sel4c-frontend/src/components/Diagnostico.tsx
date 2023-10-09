@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetchPreguntasWithFilters } from '../services/Preguntas.services';
 import { Preguntas } from '../interface/Preguntas';
+import SimplePieChart from './SimplePieChart';
+import QuestionSelector from './QuestionSelector';
 
 type FiltersType = {
     nombre_pais: string;
@@ -22,11 +24,15 @@ interface DiagnosticoProps {
 
 const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
     const [preguntas, setPreguntas] = useState<Preguntas[]>([]);
+
+    const [selectedQuestion, setSelectedQuestion] = useState<number>(1);
+    const [selectedCuestionario, setSelectedCuestionario] = useState<number>(1);
+    
+    
     useEffect(() => {
-        console.log(filters)
         const loadPreguntas = async () => {
             try {
-                const usersPreguntas= await fetchPreguntasWithFilters(1, filters);
+                const usersPreguntas = await fetchPreguntasWithFilters(selectedCuestionario, filters, selectedQuestion);
                 setPreguntas(usersPreguntas);
             } catch (error) {
                 console.error("Error fetching preguntas: ", error);
@@ -34,13 +40,38 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
         };
 
         loadPreguntas();
-    }, [filters]);
+    }, [filters, selectedCuestionario, selectedQuestion]);
     
+
+    const processDataForChart = (preguntas: Preguntas[]) => {
+        const labels = [
+            "Nada de acuerdo",
+            "Poco de acuerdo",
+            "Ni de acuerdo ni desacuerdo",
+            "De acuerdo",
+            "Muy de acuerdo"
+        ];
+
+        return labels.map(label => {
+            const value = preguntas.filter(p => p.answer === label).length;
+            return { name: label, value };
+        });
+    };
+
+    const chartData = processDataForChart(preguntas);
 
     return (
         <div>
             <h2>Diagnóstico</h2>
-            <p>Aquí irá tu gráfica o cualquier contenido relacionado con el diagnóstico.</p>
+            <h1>{preguntas[0].pregunta}</h1>
+            <QuestionSelector 
+                selectedQuestion={selectedQuestion} 
+                setSelectedQuestion={setSelectedQuestion}
+                selectedCuestionario={selectedCuestionario}
+                setSelectedCuestionario={setSelectedCuestionario}
+            />
+            <SimplePieChart data={chartData} />
+            {/* Otros componentes o elementos que quieras renderizar */}
         </div>
     );
 }
