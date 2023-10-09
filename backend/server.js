@@ -48,17 +48,17 @@ app.use(express.json());
 
 // Endpoint para obtener todos los usuarios
 app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
-  const { 
-    nombre_pais, 
-    disciplina, 
-    grado_academico, 
-    nombre_institucion, 
-    minEdad, 
-    maxEdad, 
-    nombre, 
-    apellido, 
+  const {
+    nombre_pais,
+    disciplina,
+    grado_academico,
+    nombre_institucion,
+    minEdad,
+    maxEdad,
+    nombre,
+    apellido,
     email,
-    sexo 
+    sexo
   } = req.query;
 
   let query = `
@@ -184,16 +184,16 @@ app.put('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
 // Endpoint para actualizar un usuario en xcode
 app.put('/api/usuarios/:id/xcode', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
-  const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais} = req.body;
+  const { apellido, disciplina, email, edad, sexo, grado_academico, institucion, nombre, pais } = req.body;
 
   const [paisRows] = await pool.execute('SELECT id FROM pais WHERE nombre_pais = ?', [pais]);
   if (!paisRows.length) {
     return res.status(400).json({ error: "Pais no encontrado" });
-}
+  }
   const [instRows] = await pool.execute('SELECT idinstitucion FROM institucion WHERE nombre_institucion = ?', [institucion]);
   if (!instRows.length) {
     return res.status(400).json({ error: "Institucion no encontrada" });
-}
+  }
 
   try {
     await pool.execute(
@@ -395,6 +395,119 @@ app.get('/api/usuarios/:id/respuestas/:idcuestionario', authMiddleware, async (r
   }
 });
 
+// Endpoint para tener la respuesta del cuestionario filtradas
+app.get('/api/respuestas/cuestionario', authMiddleware, async (req, res, next) => {
+  const {
+    idcuestionario,
+    nombre_pais,
+    disciplina,
+    grado_academico,
+    nombre_institucion,
+    minEdad,
+    maxEdad,
+    nombre,
+    apellido,
+    email,
+    sexo
+  } = req.query;
+
+  let query = `
+  SELECT DISTINCT pregunta.*, answer.answer
+  FROM respuesta
+  JOIN pregunta ON respuesta.idpregunta = pregunta.id
+  JOIN answer ON respuesta.idanswer = answer.idanswer
+  JOIN usuario ON respuesta.idusuario = usuario.id
+  JOIN institucion ON usuario.institucion = institucion.idinstitucion
+  JOIN pais ON usuario.pais = pais.id
+  WHERE respuesta.idcuestionario = ?;
+  `;
+
+  let params = [];
+
+  if (nombre_pais && nombre_pais !== "") {
+    query += ' AND pais.nombre_pais = ?';
+    params.push(nombre_pais);
+  }
+
+  if (disciplina && disciplina !== "") {
+    query += ' AND usuario.disciplina = ?';
+    params.push(disciplina);
+  }
+
+  if (grado_academico && grado_academico !== "") {
+    query += ' AND usuario.grado_academico = ?';
+    params.push(grado_academico);
+  }
+
+  if (nombre_institucion && nombre_institucion !== "") {
+    query += ' AND institucion.nombre_institucion = ?';
+    params.push(nombre_institucion);
+  }
+
+  if (minEdad) {
+    query += ' AND usuario.edad >= ?';
+    params.push(minEdad);
+  }
+
+  if (maxEdad) {
+    query += ' AND usuario.edad <= ?';
+    params.push(maxEdad);
+  }
+
+  if (nombre && nombre !== "") {
+    query += ' AND usuario.nombre LIKE ?';
+    params.push(`%${nombre}%`);
+  }
+
+  if (apellido && apellido !== "") {
+    query += ' AND usuario.apellido LIKE ?';
+    params.push(`%${apellido}%`);
+  }
+
+  if (email && email !== "") {
+    query += ' AND usuario.email LIKE ?';
+    params.push(`%${email}%`);
+  }
+
+  if (sexo && sexo !== "") {
+    query += ' AND usuario.sexo = ?';
+    params.push(sexo);
+  }
+
+  try {
+    const [rows] = await pool.execute(query, params);
+    res.json(rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Guardar respuestas diagnostico
+app.post('/api/guardarRespuestas', authMiddleware, async (req, res) => {
+  const respuestas = req.body;
+
+  try {
+    for (let respuesta of respuestas) {
+      let query = `
+              INSERT INTO respuesta (idanswer, idcuestionario, idusuario, idpregunta) 
+              VALUES (?, ?, ?, ?)
+          `;
+      await pool.execute(query, [respuesta.idanswer, respuesta.idcuestionario, respuesta.idusuario, respuesta.idpregunta]);
+    }
+        // Aumenta el progreso del usuario
+        let queryUpdate = `
+        UPDATE usuario 
+        SET progreso = progreso + 1
+        WHERE id = ?
+    `;
+      await pool.execute(queryUpdate, [respuesta.idusuario]);
+    res.json({ success: true, message: "Respuestas guardadas correctamente."});
+
+  } catch (error) {
+    console.error('Error al guardar las respuestas:', error);
+    res.status(500).json({ success: false, message: "Hubo un error al guardar las respuestas." });
+  }
+});
 
 // Middleware para manejar errores
 function errorHandler(err, req, res, next) {
