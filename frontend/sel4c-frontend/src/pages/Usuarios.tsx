@@ -11,6 +11,8 @@ const whiteLabelStyle: React.CSSProperties = {
   fontSize: "25px",
 };
 
+
+
 const backgroundStyle: React.CSSProperties = {
   background: "linear-gradient(to bottom, #061e61, #92b9f7)",
   top: 0,
@@ -42,7 +44,16 @@ const whiteframeStyle: React.CSSProperties = {
 };
 
 const tabbuttonStyle: React.CSSProperties = {
-  textAlign: "right", // Align buttons to the right
+  textAlign: "right", // Alinea los botones a la derecha
+  position: "absolute",
+  top: 150,
+  right: 50, // Align buttons to the right
+};
+const contentContainerStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start", // Alinea el contenido en la parte superior
+  flex: 1,   
 };
 
 const buttonStyle: React.CSSProperties = {
@@ -84,6 +95,7 @@ const Usuarios: React.FC = () => {
           <Button style={buttonStyle} onClick={() => setActiveTab('tabla')}>Tabla</Button>
           <Button style={buttonStyle} onClick={() => setActiveTab('Actividades')}>Actividades</Button>
         </div>
+        <div style={contentContainerStyle}>
         {
           activeTab === 'tabla' ? 
           <UserTable filters={filters} setFilters={setFilters} /> :
@@ -93,6 +105,7 @@ const Usuarios: React.FC = () => {
           <Actividades /> : 
           null
         }
+        </div>
       </div>
     </div>
   );
