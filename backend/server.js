@@ -486,6 +486,8 @@ app.get('/api/respuestas/cuestionario', authMiddleware, async (req, res, next) =
 app.post('/api/guardarRespuestas', authMiddleware, async (req, res) => {
   const respuestas = req.body;
 
+  let idUsuario = null;
+
   try {
     for (let respuesta of respuestas) {
       let query = `
@@ -493,6 +495,7 @@ app.post('/api/guardarRespuestas', authMiddleware, async (req, res) => {
               VALUES (?, ?, ?, ?)
           `;
       await pool.execute(query, [respuesta.idanswer, respuesta.idcuestionario, respuesta.idusuario, respuesta.idpregunta]);
+      const idUsuario = respuesta.idusuario;
     }
         // Aumenta el progreso del usuario
         let queryUpdate = `
@@ -500,7 +503,7 @@ app.post('/api/guardarRespuestas', authMiddleware, async (req, res) => {
         SET progreso = progreso + 1
         WHERE id = ?
     `;
-      await pool.execute(queryUpdate, [respuesta.idusuario]);
+      await pool.execute(queryUpdate, [idUsuario]);
     res.json({ success: true, message: "Respuestas guardadas correctamente."});
 
   } catch (error) {
