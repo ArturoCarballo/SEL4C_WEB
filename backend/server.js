@@ -495,7 +495,7 @@ app.post('/api/guardarRespuestas', authMiddleware, async (req, res) => {
               VALUES (?, ?, ?, ?)
           `;
       await pool.execute(query, [respuesta.idanswer, respuesta.idcuestionario, respuesta.idusuario, respuesta.idpregunta]);
-      const idUsuario = respuesta.idusuario;
+      idUsuario = respuesta.idusuario;
     }
         // Aumenta el progreso del usuario
         let queryUpdate = `
