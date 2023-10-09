@@ -173,7 +173,37 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
   };
 
   return (
+    <div style={{ maxHeight: "1000px", overflowY: "auto",overflowX:"auto", scrollbarWidth: "none", scrollbarColor: "transparent transparent" }}>
     <div>
+
+      <div style={{ alignItems: "center" }}>
+        <Typography variant="h6" style={wordLabelStyle}>
+          Nombre:
+        </Typography>
+        <TextField
+          value={filters.nombre || ""}
+          onChange={(e) => setFilters({ ...filters, nombre: e.target.value })}
+          style={textboxStyle}
+        />
+
+        <Typography variant="h6" style={wordLabelStyle}>
+          Apellido:
+        </Typography>
+        <TextField
+          value={filters.apellido || ""}
+          onChange={(e) => setFilters({ ...filters, apellido: e.target.value })}
+          style={textboxStyle}
+        />
+
+        <Typography variant="h6" style={wordLabelStyle}>
+          Correo:
+        </Typography>
+        <TextField
+          value={filters.email || ""}
+          onChange={(e) => setFilters({ ...filters, email: e.target.value })}
+          style={textboxStyle}
+        />
+      </div>
       <Typography
         variant="h6"
         style={{ fontWeight: "bold", color: "navy", fontSize: "25px" }}
@@ -400,34 +430,8 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           </Select>
         </FormControl>
       </div>
-      <div style={{ alignItems: "center" }}>
-        <Typography variant="h6" style={wordLabelStyle}>
-          Nombre:
-        </Typography>
-        <TextField
-          value={filters.nombre || ""}
-          onChange={(e) => setFilters({ ...filters, nombre: e.target.value })}
-          style={textboxStyle}
-        />
-
-        <Typography variant="h6" style={wordLabelStyle}>
-          Apellido:
-        </Typography>
-        <TextField
-          value={filters.apellido || ""}
-          onChange={(e) => setFilters({ ...filters, apellido: e.target.value })}
-          style={textboxStyle}
-        />
-
-        <Typography variant="h6" style={wordLabelStyle}>
-          Correo:
-        </Typography>
-        <TextField
-          value={filters.email || ""}
-          onChange={(e) => setFilters({ ...filters, email: e.target.value })}
-          style={textboxStyle}
-        />
-      </div>
+      
+    </div>
     </div>
   );
 };

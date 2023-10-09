@@ -9,7 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import LogoutButton from './LogoutButton';
+
 
 import FilterComponent from './FilterComponent';
 
@@ -297,7 +297,7 @@ export const UserTable: React.FC<UserTableProps> = ({ filters, setFilters }) => 
                     onRowsPerPageChange={(event) => setRowsPerPage(parseInt(event.target.value, 10))}
                     labelRowsPerPage="Usuarios por página:"
                 />
-                <LogoutButton></LogoutButton>
+                
             </div>
         </div>
     );
