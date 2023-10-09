@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { Link } from "react-router-dom";
-
+import LogoutButton from "./LogoutButton";
 const Navbar: React.FC = () => {
 
   return (
@@ -41,6 +41,7 @@ const Navbar: React.FC = () => {
           <Button color="inherit" component={Link} to="/admins">
             Admins
           </Button>
+          <LogoutButton></LogoutButton>
           {/* ... Add as many buttons as needed for other routes ... */}
         </div>
       </Toolbar>
