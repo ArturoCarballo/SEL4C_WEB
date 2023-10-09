@@ -100,7 +100,7 @@ const Usuarios: React.FC = () => {
           activeTab === 'tabla' ? 
           <UserTable filters={filters} setFilters={setFilters} /> :
           activeTab === 'diagnostico' ?
-          <Diagnostico /> : 
+          <Diagnostico filters={filters} setFilters={setFilters}/> : 
           activeTab === 'Actividades' ?
           <Actividades /> : 
           null
