@@ -110,26 +110,27 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
     }
   };
 
-  const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const newValue = event.target.value;
     const name = event.target.name;
 
     // Asegurarse de que el newValue contiene solo dígitos
     if (!/^\d*$/.test(newValue)) {
-        return; // No actualizar el valor si no es un número
+      return; // No actualizar el valor si no es un número
     }
 
     const numberValue = parseInt(newValue, 10); // Convertir la cadena a número
 
     if (name === "minEdad") {
-        setValue([numberValue, value[1]]);
-        setFilters((prevFilters) => ({ ...prevFilters, minEdad: numberValue }));
+      setValue([numberValue, value[1]]);
+      setFilters((prevFilters) => ({ ...prevFilters, minEdad: numberValue }));
     } else if (name === "maxEdad") {
-        setValue([value[0], numberValue]);
-        setFilters((prevFilters) => ({ ...prevFilters, maxEdad: numberValue }));
+      setValue([value[0], numberValue]);
+      setFilters((prevFilters) => ({ ...prevFilters, maxEdad: numberValue }));
     }
-};
-
+  };
 
   const handleFilterChange = (
     event: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
@@ -173,11 +174,14 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
   };
 
   return (
+
     <div style={{ maxHeight: "1000px", overflowY: "auto", overflowX:"auto", scrollbarWidth: "none", scrollbarColor: "transparent transparent" }}>
     <div>
-
       <div style={{ alignItems: "center" }}>
-        <Typography variant="h6" style={wordLabelStyle}>
+        <Typography
+          variant="h6"
+          style={{ fontWeight: "bold", color: "navy", fontSize: "25px" }}
+        >
           Nombre:
         </Typography>
         <TextField
@@ -204,10 +208,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           style={textboxStyle}
         />
       </div>
-      <Typography
-        variant="h6"
-        style={{ fontWeight: "bold", color: "navy", fontSize: "25px" }}
-      >
+      <Typography variant="h6" style={wordLabelStyle}>
         Sexo:
       </Typography>
       <div>
@@ -314,8 +315,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             fontWeight: "bold",
             fontSize: "25px",
           }}
-        >
-        </Typography>
+        ></Typography>
         <TextField
           label={<Typography style={optionLabelStyle}></Typography>}
           value={filters.maxEdad || 0}
@@ -443,8 +443,6 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
           </Select>
         </FormControl>
       </div>
-      
-    </div>
     </div>
   );
 };
