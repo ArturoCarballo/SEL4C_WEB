@@ -23,26 +23,32 @@ interface DiagnosticoProps {
 }
 
 const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
-  const [preguntas, setPreguntas] = useState<Preguntas[]>([]);
+  const [preguntas1, setPreguntas1] = useState<Preguntas[]>([]);
+  const [preguntas2, setPreguntas2] = useState<Preguntas[]>([]);
 
   const [selectedQuestion, setSelectedQuestion] = useState<number>(1);
-  const [selectedCuestionario, setSelectedCuestionario] = useState<number>(1);
+  const [selectedCuestionario, setSelectedCuestionario] = useState<number>(0);
 
   useEffect(() => {
-    const loadPreguntas = async () => {
+    const loadPreguntas = async (cuestionario: number) => {
       try {
         const usersPreguntas = await fetchPreguntasWithFilters(
-          selectedCuestionario,
+          cuestionario,
           filters,
           selectedQuestion
         );
-        setPreguntas(usersPreguntas);
+        if(cuestionario === 1) {
+          setPreguntas1(usersPreguntas);
+        } else if(cuestionario === 2) {
+          setPreguntas2(usersPreguntas);
+        }
       } catch (error) {
         console.error("Error fetching preguntas: ", error);
       }
     };
 
-    loadPreguntas();
+    loadPreguntas(1);
+    loadPreguntas(2);
   }, [filters, selectedCuestionario, selectedQuestion]);
 
   const processDataForChart = (preguntas: Preguntas[]) => {
@@ -82,13 +88,14 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
     marginLeft: "50px",
   };
 
-  const chartData = processDataForChart(preguntas);
+  const chartData1 = processDataForChart(preguntas1);
+  const chartData2 = processDataForChart(preguntas2);
 
   return (
     <div>
       <h2 style={titleStyle}>Diagnósticos</h2>
       <h1 style={questionStyle}>
-        {preguntas.length > 0 ? preguntas[0].pregunta : "Cargando pregunta..."}
+        {preguntas1.length > 0 ? preguntas1[0].pregunta : "Cargando pregunta..."}
       </h1>
       <QuestionSelector
         selectedQuestion={selectedQuestion}
@@ -100,11 +107,11 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
       <div style={{ display: "flex" }}>
         {/*aquí para que estén las dos a la vez*/}
         <div style={{ flex: 1 }}>
-          <SimplePieChart data={chartData} />
+          <SimplePieChart data={chartData1} />
           <h1 style={wordLabelStyle}>Inicial</h1>
         </div>
         <div style={{ flex: 1 }}>
-          <SimplePieChart data={chartData} />
+          <SimplePieChart data={chartData2} />
           <h1 style={wordLabelStyle}>Final</h1>
         </div>
       </div>

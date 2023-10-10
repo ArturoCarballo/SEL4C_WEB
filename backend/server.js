@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
 require('dotenv').config();
 
 
@@ -45,6 +46,26 @@ function authMiddleware(req, res, next) {
 // Middleware para parsear el cuerpo de las solicitudes JSON
 app.use(express.json());
 
+// Configura multer para guardar archivos en la carpeta 'uploads/'
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+      cb(null, 'uploads/');
+  },
+  filename: function(req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + '.mp4');
+  }
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/subir_archivo', upload.single('file'), (req, res) => {
+  const user = req.body.user;
+  const evidenceName = req.body.evidence_name;
+
+  console.log(`Received video from ${user}. Saved as: ${req.file.filename}`);
+  
+  res.send({ message: 'Video uploaded successfully!' });
+});
 
 // Endpoint para obtener todos los usuarios
 app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
