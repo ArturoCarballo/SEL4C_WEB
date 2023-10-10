@@ -1,17 +1,9 @@
 import { useState } from "react";
 import { UserTable } from "../components/UserTable";
 import FilterComponent from "../components/FilterComponent";
-import { Button } from "@mui/material";
+import { Button, ButtonGroup } from "@mui/material";
 import Diagnostico from "../components/Diagnostico";
 import Actividades from "../components/Actividades";
-
-const whiteLabelStyle: React.CSSProperties = {
-  fontWeight: "bold",
-  color: "white",
-  fontSize: "25px",
-};
-
-
 
 const backgroundStyle: React.CSSProperties = {
   background: "linear-gradient(to bottom, #061e61, #92b9f7)",
@@ -24,7 +16,8 @@ const backgroundStyle: React.CSSProperties = {
 
 const filterframeStyle: React.CSSProperties = {
   background: "white",
-  maxWidth: "500px",
+  maxWidth: "225px",
+  width: "225px",
   flexDirection: "column",
   margin: "10px",
   borderRadius: "10px",
@@ -53,20 +46,19 @@ const contentContainerStyle: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start", // Alinea el contenido en la parte superior
-  flex: 1,   
+  flex: 1,
 };
 
 const buttonStyle: React.CSSProperties = {
   fontSize: "20px",
   fontWeight: "bold",
-  color: "Navy",
-  backgroundColor: "white", // Green background color
-  border: "0px",
+  color: "navy",
   marginInline: "2px",
   margin: "2px", // Set margin
   borderRadius: "5px",
   padding: "2px 10px", // Set padding to match margin (adjust as needed)
   textTransform: "none",
+  borderColor: "navy",
 };
 
 const Usuarios: React.FC = () => {
@@ -83,7 +75,7 @@ const Usuarios: React.FC = () => {
     sexo: "",
   });
 
-  const [activeTab, setActiveTab] = useState('tabla');
+  const [activeTab, setActiveTab] = useState("tabla");
   return (
     <div style={backgroundStyle}>
       <div style={filterframeStyle}>
@@ -91,20 +83,32 @@ const Usuarios: React.FC = () => {
       </div>
       <div style={whiteframeStyle}>
         <div style={tabbuttonStyle}>
-          <Button style={buttonStyle} onClick={() => setActiveTab('diagnostico')}>Diagnósticos</Button>
-          <Button style={buttonStyle} onClick={() => setActiveTab('tabla')}>Tabla</Button>
-          <Button style={buttonStyle} onClick={() => setActiveTab('Actividades')}>Actividades</Button>
+          <ButtonGroup variant="outlined" size="medium">
+            <Button
+              style={buttonStyle}
+              onClick={() => setActiveTab("diagnostico")}
+            >
+              Diagnósticos
+            </Button>
+            <Button style={buttonStyle} onClick={() => setActiveTab("tabla")}>
+              Tablas
+            </Button>
+            <Button
+              style={buttonStyle}
+              onClick={() => setActiveTab("Actividades")}
+            >
+              Actividades
+            </Button>
+          </ButtonGroup>
         </div>
         <div style={contentContainerStyle}>
-        {
-          activeTab === 'tabla' ? 
-          <UserTable filters={filters} setFilters={setFilters} /> :
-          activeTab === 'diagnostico' ?
-          <Diagnostico filters={filters} setFilters={setFilters}/> : 
-          activeTab === 'Actividades' ?
-          <Actividades /> : 
-          null
-        }
+          {activeTab === "tabla" ? (
+            <UserTable filters={filters} setFilters={setFilters} />
+          ) : activeTab === "diagnostico" ? (
+            <Diagnostico filters={filters} setFilters={setFilters} />
+          ) : activeTab === "Actividades" ? (
+            <Actividades />
+          ) : null}
         </div>
       </div>
     </div>
