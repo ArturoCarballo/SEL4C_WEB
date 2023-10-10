@@ -61,7 +61,15 @@ export const AdminTable: React.FC = () => {
     };
 
     const handleDeleteAdmin= async (id: number) => {
+        const authAdminId: string | null = localStorage.getItem("admin_id");
+        const authAdminIdNumber: number = authAdminId ? parseInt(authAdminId) : -1;
+
+        if (id === authAdminIdNumber) {
+            alert('No puedes eliminarte a ti mismo.');
+            return;
+        }
         const shouldDelete = window.confirm('¿Estás seguro de que quieres eliminar este admin?');
+
         if (shouldDelete) {
             try {
                 await deleteAdmin(id);
@@ -87,6 +95,11 @@ export const AdminTable: React.FC = () => {
     
 
     const handleEditAdmin = async (admin: Admin) => {
+        const authAdminId: string | null = localStorage.getItem("admin_id");
+        const authAdminIdNumber: number = authAdminId ? parseInt(authAdminId) : -1;
+        if (admin.id !== authAdminIdNumber) {
+            throw new Error('Solo puedes editar tu propia información.');
+        }
         try {
             const updatedAdmin = await updateAdmin(admin);
             setAdmins(prevAdmins => prevAdmins.map(a => a.id === admin.id ? updatedAdmin : a));
