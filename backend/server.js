@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const dbConfig = {
-  host: '82.165.210.98',
+  host: '82.165.212.88',
   user: 'Api',
   password: 'ApiGOD',
   database: 'Main',

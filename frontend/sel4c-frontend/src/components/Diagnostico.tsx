@@ -64,6 +64,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
         <div>
             <h2>Diagnóstico</h2>
             <h1>{preguntas.length > 0 ? preguntas[0].pregunta : 'Cargando pregunta...'}</h1>
+
             <QuestionSelector 
                 selectedQuestion={selectedQuestion} 
                 setSelectedQuestion={setSelectedQuestion}

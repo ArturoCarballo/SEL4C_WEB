@@ -173,7 +173,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
   };
 
   return (
-    <div style={{ maxHeight: "1000px", overflowY: "auto",overflowX:"auto", scrollbarWidth: "none", scrollbarColor: "transparent transparent" }}>
+    <div style={{ maxHeight: "1000px", overflowY: "auto", overflowX:"auto", scrollbarWidth: "none", scrollbarColor: "transparent transparent" }}>
     <div>
 
       <div style={{ alignItems: "center" }}>
