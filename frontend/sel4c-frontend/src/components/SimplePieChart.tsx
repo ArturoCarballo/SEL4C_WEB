@@ -1,7 +1,9 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
+
 const COLORS = ["#990000", "#e65c00", "orange", "#00cc00", "#0033cc"];
+
 
 interface SimplePieChartData {
   name: string;

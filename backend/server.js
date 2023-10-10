@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const dbConfig = {
-  host: '82.165.210.98',
+  host: '82.165.212.88',
   user: 'Api',
   password: 'ApiGOD',
   database: 'Main',
@@ -291,7 +291,7 @@ app.post('/api/admin/login', async (req, res, next) => {
   const token = jwt.sign({ id: admin[0].id }, process.env.SECRET_KEY, {
     expiresIn: 86400 // 24 horas
   });
-  res.json({ auth: true, token: token });
+  res.json({ auth: true, token: token, id: admin[0].id });
 });
 
 // Endpoint para preguntas

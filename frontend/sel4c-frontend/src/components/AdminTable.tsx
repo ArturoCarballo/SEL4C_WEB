@@ -79,21 +79,25 @@ export const AdminTable: React.FC = () => {
     setSortConfig({ key, direction });
   };
 
-  const handleDeleteAdmin = async (id: number) => {
-    const shouldDelete = window.confirm(
-      "¿Estás seguro de que quieres eliminar este admin?"
-    );
-    if (shouldDelete) {
-      try {
-        await deleteAdmin(id);
-        setAdmins((prevAdmins) =>
-          prevAdmins.filter((admin) => admin.id !== id)
-        );
-      } catch (error) {
-        console.error("Error deleting admin: ", error);
-      }
-    }
-  };
+    const handleDeleteAdmin= async (id: number) => {
+        const authAdminId: string | null = localStorage.getItem("admin_id");
+        const authAdminIdNumber: number = authAdminId ? parseInt(authAdminId) : -1;
+
+        if (id === authAdminIdNumber) {
+            alert('No puedes eliminarte a ti mismo.');
+            return;
+        }
+        const shouldDelete = window.confirm('¿Estás seguro de que quieres eliminar este admin?');
+
+        if (shouldDelete) {
+            try {
+                await deleteAdmin(id);
+                setAdmins(prevAdmins => prevAdmins.filter(admin => admin.id !== id));
+            } catch (error) {
+                console.error("Error deleting admin: ", error);
+            }
+        }
+    };
 
   const handleAddAdmin = async (admin: Admin) => {
     try {
@@ -107,18 +111,22 @@ export const AdminTable: React.FC = () => {
     }
   };
 
-  const handleEditAdmin = async (admin: Admin) => {
-    try {
-      const updatedAdmin = await updateAdmin(admin);
-      setAdmins((prevAdmins) =>
-        prevAdmins.map((a) => (a.id === admin.id ? updatedAdmin : a))
-      );
-      return updatedAdmin;
-    } catch (error) {
-      console.error("Error updating admin: ", error);
-      throw error;
-    }
-  };
+    const handleEditAdmin = async (admin: Admin) => {
+        const authAdminId: string | null = localStorage.getItem("admin_id");
+        const authAdminIdNumber: number = authAdminId ? parseInt(authAdminId) : -1;
+        if (admin.id !== authAdminIdNumber) {
+            throw new Error('Solo puedes editar tu propia información.');
+        }
+        try {
+            const updatedAdmin = await updateAdmin(admin);
+            setAdmins(prevAdmins => prevAdmins.map(a => a.id === admin.id ? updatedAdmin : a));
+            return updatedAdmin;
+        } catch (error) {
+            console.error("Error updating admin: ", error);
+            throw error;
+        }
+    };
+  
 
   return (
     <div>
