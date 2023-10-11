@@ -1,0 +1,9 @@
+.scrollableContainer {
+    max-height: 300px; /* Altura máxima que quieres para la lista */
+    overflow-y: auto; /* Habilita el desplazamiento vertical cuando el contenido supera la altura máxima */
+  }
+  
+  li {
+    list-style-type: none; /* Elimina los puntos de la lista. Esto es opcional */
+    padding: 10px; /* Espaciado alrededor de cada ítem de la lista. Esto también es opcional */
+  }
