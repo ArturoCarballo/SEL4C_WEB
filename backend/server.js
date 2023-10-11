@@ -240,9 +240,16 @@ app.put('/api/usuarios/:id/xcode', authMiddleware, async (req, res, next) => {
 // Endpoint para actualizar un usuario en xcode (Solo contraseña)
 app.put('/api/usuarios/:id/password/xcode', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
-  const { password } = req.body;
+  const { password_act, password_nuev } = req.body;
 
-  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+  const hashedPassword = bcrypt.hashSync(password_nuev, saltRounds);
+
+  // Verifica el usuario y la contraseña
+  const [usuario] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
+
+  if (usuario == "" || !bcrypt.compareSync(password_act, usuario[0].password)) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
 
   try {
     await pool.execute(
@@ -320,8 +327,6 @@ app.post('/api/usuarios/login', async (req, res, next) => {
 
   // Verifica el usuario y la contraseña
   const [usuario] = await pool.execute('SELECT * FROM usuario WHERE email = ?', [email]);
-
-  console.log(usuario);
 
   if (usuario == "" || !bcrypt.compareSync(password, usuario[0].password)) {
     return res.status(401).json({ error: 'Invalid credentials' });
