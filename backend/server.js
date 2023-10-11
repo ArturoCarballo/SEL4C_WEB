@@ -58,14 +58,30 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post('/api/subir_archivo', upload.single('file'), (req, res) => {
-  const user = req.body.user;
-  const evidenceName = req.body.evidence_name;
+app.post('/api/subir_archivo', (req, res, next) => {
+  upload.single('file')(req, res, (uploadError) => {
+      if (uploadError instanceof multer.MulterError) {
+          // A Multer error occurred when uploading.
+          return res.status(400).json({ message: uploadError.message });
+      } else if (uploadError) {
+          // An unknown error occurred when uploading.
+          return res.status(500).json({ message: uploadError.message });
+      }
 
-  console.log(`Received video from ${user}. Saved as: ${req.file.filename}`);
-  
-  res.send({ message: 'Video uploaded successfully!' });
+      const user = req.body.user;
+      const evidenceName = req.body.evidence_name;
+
+      // Check if required fields are present
+      if (!user || !evidenceName || !req.file) {
+          return res.status(400).json({ message: 'Required fields are missing.' });
+      }
+
+      console.log(`Received video from ${user}. Saved as: ${req.file.filename}`);
+
+      res.send({ message: 'Video uploaded successfully!' });
+  });
 });
+
 
 // Endpoint para obtener todos los usuarios
 app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
