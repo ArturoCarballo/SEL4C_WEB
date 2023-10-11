@@ -58,7 +58,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post('api/subir_archivo', upload.single('file'), (req, res) => {
+app.post('/api/subir_archivo', upload.single('file'), (req, res) => {
   const user = req.body.user;
   const evidenceName = req.body.evidence_name;
 
