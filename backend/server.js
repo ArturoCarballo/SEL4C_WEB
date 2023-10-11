@@ -257,9 +257,7 @@ app.put('/api/usuarios/:id/password/xcode', authMiddleware, async (req, res, nex
       [hashedPassword, id]
     );
 
-    const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
-    const updatedAdmin = rows[0];
-    res.status(200).json(updatedAdmin)
+    res.status(200).json({ message: "Cambiada contraseña"})
   } catch (error) {
     next(error);
   }
