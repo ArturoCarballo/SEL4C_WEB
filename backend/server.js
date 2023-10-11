@@ -48,39 +48,56 @@ app.use(express.json());
 
 // Configura multer para guardar archivos en la carpeta 'uploads/'
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-      cb(null, 'uploads/');
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
   },
-  filename: function(req, file, cb) {
-      cb(null, file.fieldname + '-' + Date.now() + '.mp4');
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + '.mp4');
   }
 });
 
 const upload = multer({ storage: storage });
 
 app.post('/api/subir_archivo', (req, res, next) => {
-  upload.single('file')(req, res, (uploadError) => {
-      if (uploadError instanceof multer.MulterError) {
-          // A Multer error occurred when uploading.
-          return res.status(400).json({ message: uploadError.message });
-      } else if (uploadError) {
-          // An unknown error occurred when uploading.
-          return res.status(500).json({ message: uploadError.message });
-      }
+  upload.single('file')(req, res, async (uploadError) => { // <- Haz esta función async
+    if (uploadError instanceof multer.MulterError) {
+      // A Multer error occurred when uploading.
+      return res.status(400).json({ message: uploadError.message });
+    } else if (uploadError) {
+      // An unknown error occurred when uploading.
+      return res.status(500).json({ message: uploadError.message });
+    }
 
-      const user = req.body.user;
-      const evidenceName = req.body.evidence_name;
+    const user = req.body.user;
+    const evidenceName = req.body.evidence_name;
 
-      // Check if required fields are present
-      if (!user || !evidenceName || !req.file) {
-          return res.status(400).json({ message: 'Required fields are missing.' });
-      }
+    // Check if required fields are present
+    if (!user || !evidenceName || !req.file) {
+      return res.status(400).json({ message: 'Required fields are missing.' });
+    }
+
+    // Aquí faltan definiciones, como la de `idUsuario`. 
+    // Asegúrate de que esté definido antes de usarlo.
+
+    try {
+      // Aumenta el progreso del usuario
+      let queryUpdate = `
+          UPDATE usuario 
+          SET progreso = progreso + 1
+          WHERE id = ?
+      `;
+      await pool.execute(queryUpdate, [idUsuario]);
+      res.json({ success: true, message: "Respuestas guardadas correctamente." });
 
       console.log(`Received video from ${user}. Saved as: ${req.file.filename}`);
-
       res.send({ message: 'Video uploaded successfully!' });
+    } catch (error) {
+      console.error('Error updating progress:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   });
 });
+
 
 
 // Endpoint para obtener todos los usuarios
@@ -257,7 +274,7 @@ app.put('/api/usuarios/:id/password/xcode', authMiddleware, async (req, res, nex
       [hashedPassword, id]
     );
 
-    res.status(200).json({ message: "Cambiada contraseña"})
+    res.status(200).json({ message: "Cambiada contraseña" })
   } catch (error) {
     next(error);
   }
@@ -284,7 +301,7 @@ app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
 
   await pool.execute('DELETE FROM respuesta WHERE idusuario = ?', [id]);
-  await pool.execute('DELETE FROM usuario WHERE id = ?', [id]); 
+  await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
   try {
     await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
     res.status(200).send();
@@ -456,7 +473,7 @@ app.get('/api/usuarios/:id/respuestas/:idcuestionario', authMiddleware, async (r
 
 // Endpoint para tener la respuesta del cuestionario filtradas
 app.get('/api/respuestas/cuestionario/:idcuestionario', authMiddleware, async (req, res, next) => {
-  const { idcuestionario} = req.params;
+  const { idcuestionario } = req.params;
   const {
     questionId,
     nombre_pais,
@@ -558,14 +575,14 @@ app.post('/api/guardarRespuestas', authMiddleware, async (req, res) => {
       await pool.execute(query, [respuesta.idanswer, respuesta.idcuestionario, respuesta.idusuario, respuesta.idpregunta]);
       idUsuario = respuesta.idusuario;
     }
-        // Aumenta el progreso del usuario
-        let queryUpdate = `
+    // Aumenta el progreso del usuario
+    let queryUpdate = `
         UPDATE usuario 
         SET progreso = progreso + 1
         WHERE id = ?
     `;
-      await pool.execute(queryUpdate, [idUsuario]);
-    res.json({ success: true, message: "Respuestas guardadas correctamente."});
+    await pool.execute(queryUpdate, [idUsuario]);
+    res.json({ success: true, message: "Respuestas guardadas correctamente." });
 
   } catch (error) {
     console.error('Error al guardar las respuestas:', error);

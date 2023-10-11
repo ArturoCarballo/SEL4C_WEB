@@ -53,8 +53,8 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
 
   const processDataForChart = (preguntas: Preguntas[]) => {
     const labels = [
-      "Nada de acuerdo",
-      "Poco de acuerdo",
+      "Muy en desacuerdo",
+      "En desacuerdo",
       "Ni de acuerdo ni desacuerdo",
       "De acuerdo",
       "Muy de acuerdo",
@@ -87,7 +87,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
     marginInline: "20px",
     marginLeft: "50px",
   };
-
+  
   const chartData1 = processDataForChart(preguntas1);
   const chartData2 = processDataForChart(preguntas2);
 
@@ -103,7 +103,6 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
         selectedCuestionario={selectedCuestionario}
         setSelectedCuestionario={setSelectedCuestionario}
       />
-      <div style={{ display: "flex" }}></div>
       <div style={{ display: "flex" }}>
         {/*aquí para que estén las dos a la vez*/}
         <div style={{ flex: 1 }}>
