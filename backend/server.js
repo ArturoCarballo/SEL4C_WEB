@@ -237,6 +237,27 @@ app.put('/api/usuarios/:id/xcode', authMiddleware, async (req, res, next) => {
   }
 });
 
+// Endpoint para actualizar un usuario en xcode (Solo contraseña)
+app.put('/api/usuarios/:id/password/xcode', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+  const { password } = req.body;
+
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+  try {
+    await pool.execute(
+      'UPDATE usuario SET password = ? WHERE id = ?',
+      [hashedPassword, id]
+    );
+
+    const [rows] = await pool.execute('SELECT * FROM usuario WHERE id = ?', [id]);
+    const updatedAdmin = rows[0];
+    res.status(200).json(updatedAdmin)
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Endpoint para tener un usuario
 app.get('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;

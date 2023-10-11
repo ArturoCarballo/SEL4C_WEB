@@ -42,7 +42,7 @@ const Actividades: React.FC = () => {
       {activitiesData.map((activity, index) => (
         <div key={index} style={activityStyle}>
           <Typography>{activity.name}</Typography>
-          <LinearProgress variant="determinate" value={activity.progress} />
+          <LinearProgress variant="determinate" value={10} />
         </div>
       ))}
     </div>
