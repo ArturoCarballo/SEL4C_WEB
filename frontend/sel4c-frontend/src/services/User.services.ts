@@ -18,8 +18,31 @@ export const fetchUsers = async (): Promise<User[]> => {
 export const fetchUsersWithFilters = async (filters: any): Promise<User[]> => {
     const token = localStorage.getItem("admin_token");
 
-    // 1. Construye la cadena de consulta
-    const queryString = new URLSearchParams(filters).toString();
+    console.log(filters)
+
+    // 1. Inicializa URLSearchParams
+    const params = new URLSearchParams();
+
+    // 2. Añade otros filtros que no son 'sexo'
+    Object.keys(filters).forEach(key => {
+        if (key !== 'sexo' && filters[key]) {
+            params.append(key, filters[key]);
+        }
+    });
+
+    // 3. Añade los filtros de 'sexo'
+    if (filters.sexo) {
+        Object.keys(filters.sexo).forEach(key => {
+            if (filters.sexo[key]) {
+                params.append('sexo', key);
+            }
+        });
+    }
+
+    // 4. Construye la cadena de consulta
+    const queryString = params.toString();
+
+    console.log(queryString);
     
     const response = await fetch(`/api/usuarios?${queryString}`, {
         method: "GET",
@@ -32,6 +55,7 @@ export const fetchUsersWithFilters = async (filters: any): Promise<User[]> => {
     if (!response.ok) throw new Error('Error fetching users');
     return response.json();
 }
+
 
 export const addUser = async (user: User): Promise<User> => {
     const token = localStorage.getItem("admin_token");

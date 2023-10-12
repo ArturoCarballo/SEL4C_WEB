@@ -76,9 +76,6 @@ app.post('/api/subir_archivo', (req, res, next) => {
       return res.status(400).json({ message: 'Required fields are missing.' });
     }
 
-    // Aquí faltan definiciones, como la de `idUsuario`. 
-    // Asegúrate de que esté definido antes de usarlo.
-
     try {
       // Aumenta el progreso del usuario
       let queryUpdate = `
@@ -86,11 +83,10 @@ app.post('/api/subir_archivo', (req, res, next) => {
           SET progreso = progreso + 1
           WHERE id = ?
       `;
-      await pool.execute(queryUpdate, [idUsuario]);
-      res.json({ success: true, message: "Respuestas guardadas correctamente." });
-
+      await pool.execute(queryUpdate, [user]);
       console.log(`Received video from ${user}. Saved as: ${req.file.filename}`);
-      res.send({ message: 'Video uploaded successfully!' });
+
+      res.json({ success: true, message: "Respuestas guardadas correctamente." });
     } catch (error) {
       console.error('Error updating progress:', error);
       res.status(500).json({ message: 'Internal server error' });
@@ -170,9 +166,16 @@ app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
     params.push(`%${email}%`);
   }
 
-  if (sexo && sexo !== "") {
-    query += ' AND usuario.sexo = ?';
-    params.push(sexo);
+  if (sexo) {
+    if (Array.isArray(sexo)) { // Checar si es un array
+      // Usar placeholders '?' para cada valor en el array
+      const placeholders = sexo.map(() => '?').join(',');
+      query += ` AND usuario.sexo IN (${placeholders})`;
+      params.push(...sexo);
+    } else {
+      query += ' AND usuario.sexo = ?';
+      params.push(sexo);
+    }
   }
 
   try {

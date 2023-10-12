@@ -35,7 +35,12 @@ type FiltersType = {
   nombre: string;
   apellido: string;
   email: string;
-  sexo: string;
+  sexo: {
+    Masculino: boolean;
+    Femenino: boolean;
+    "No binario": boolean;
+    "Prefiero no decir": boolean;
+  };
 };
 
 const buttonStyle: React.CSSProperties = {
