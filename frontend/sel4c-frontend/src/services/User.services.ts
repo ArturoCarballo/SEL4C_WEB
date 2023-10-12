@@ -18,8 +18,6 @@ export const fetchUsers = async (): Promise<User[]> => {
 export const fetchUsersWithFilters = async (filters: any): Promise<User[]> => {
     const token = localStorage.getItem("admin_token");
 
-    console.log(filters)
-
     // 1. Inicializa URLSearchParams
     const params = new URLSearchParams();
 
@@ -41,8 +39,6 @@ export const fetchUsersWithFilters = async (filters: any): Promise<User[]> => {
 
     // 4. Construye la cadena de consulta
     const queryString = params.toString();
-
-    console.log(queryString);
     
     const response = await fetch(`/api/usuarios?${queryString}`, {
         method: "GET",

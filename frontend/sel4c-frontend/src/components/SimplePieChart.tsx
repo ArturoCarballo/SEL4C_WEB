@@ -31,7 +31,9 @@ const SimplePieChart: React.FC<SimplePieChartProps> = ({ data }) => {
         ))}
       </Pie>
       <Tooltip />
-      <Legend />
+      <Legend
+  wrapperStyle={{ bottom: -20, left: 25, lineHeight: '0px' }}
+/>
     </PieChart>
   );
 };

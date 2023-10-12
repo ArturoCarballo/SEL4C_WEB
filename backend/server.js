@@ -550,9 +550,16 @@ app.get('/api/respuestas/cuestionario/:idcuestionario', authMiddleware, async (r
     params.push(`%${email}%`);
   }
 
-  if (sexo && sexo !== "") {
-    query += ' AND usuario.sexo = ?';
-    params.push(sexo);
+  if (sexo) {
+    if (Array.isArray(sexo)) { // Checar si es un array
+      // Usar placeholders '?' para cada valor en el array
+      const placeholders = sexo.map(() => '?').join(',');
+      query += ` AND usuario.sexo IN (${placeholders})`;
+      params.push(...sexo);
+    } else {
+      query += ' AND usuario.sexo = ?';
+      params.push(sexo);
+    }
   }
 
   try {
