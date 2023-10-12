@@ -55,8 +55,8 @@ const Navbar: React.FC = () => {
             <Button style={buttonStyle} component={Link} to="/">
               Bandeja
             </Button>
+            <LogoutButton></LogoutButton>
           </ButtonGroup>
-          <LogoutButton></LogoutButton>
           {/* ... Add as many buttons as needed for other routes ... */}
         </div>
       </Toolbar>

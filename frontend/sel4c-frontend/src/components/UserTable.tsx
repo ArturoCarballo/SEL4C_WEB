@@ -10,6 +10,7 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  TablePagination,
   Button,
 } from "@mui/material";
 import {
@@ -18,7 +19,6 @@ import {
   updateUser,
   deleteUser,
 } from "../services/User.services";
-import TablePagination from "@mui/material/TablePagination";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -38,12 +38,19 @@ type FiltersType = {
   sexo: string;
 };
 
+const verticalPaginationStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+};
+
 const buttonStyle: React.CSSProperties = {
   fontSize: "20px",
   fontWeight: "bold",
-  color: "navy",
+  backgroundColor: "navy",
+  color: "white",
   border: "0px",
-  marginInline: "2px",
+  marginInline: "25px",
   margin: "2px", // Set margin
   borderRadius: "5px",
   padding: "2px 10px", // Set padding to match margin (adjust as needed)
@@ -54,14 +61,6 @@ const headerStyle: React.CSSProperties = {
   fontWeight: "bold",
   color: "navy",
   fontSize: "15px",
-};
-
-const wordLabelStyle: React.CSSProperties = {
-  fontWeight: "bold",
-  color: "navy",
-  fontSize: "25px",
-  overflow: "nowrap",
-  marginInline: "20px",
 };
 
 const titleStyle: React.CSSProperties = {
@@ -202,11 +201,7 @@ export const UserTable: React.FC<UserTableProps> = ({
       <div style={{ flex: 1, marginRight: "20px" }}></div>
       <div style={{ flex: 2 }}>
         <h2 style={titleStyle}>Usuarios</h2>
-        <Button
-          variant="contained"
-          style={buttonStyle}
-          onClick={() => setIsAddingUser(true)}
-        >
+        <Button style={buttonStyle} onClick={() => setIsAddingUser(true)}>
           Añadir Usuario
         </Button>
         <Table>
@@ -368,13 +363,14 @@ export const UserTable: React.FC<UserTableProps> = ({
           component="div"
           count={sortedUsers.length}
           page={page}
-          style={wordLabelStyle}
+          style={headerStyle}
           onPageChange={(event, newPage) => setPage(newPage)}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={(event) =>
             setRowsPerPage(parseInt(event.target.value, 10))
           }
           labelRowsPerPage="Usuarios por página:"
+          sx={verticalPaginationStyle}
         />
 
         <UserFormModal
