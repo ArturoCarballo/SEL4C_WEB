@@ -51,7 +51,6 @@ const buttonStyle: React.CSSProperties = {
 };
 
 const headerStyle: React.CSSProperties = {
-  width: "60px",
   fontWeight: "bold",
   color: "navy",
   fontSize: "15px",
@@ -74,10 +73,8 @@ const titleStyle: React.CSSProperties = {
 };
 
 const rowStyle: React.CSSProperties = {
-  width: "50px",
-  color: "black",
   fontSize: "15px",
-  textOverflow: "ellipsis", // Show ellipsis for overflowed text
+  overflow: "nowrap",
 };
 
 interface UserTableProps {
@@ -337,17 +334,15 @@ export const UserTable: React.FC<UserTableProps> = ({
           <TableBody>
             {displayedUsers.map((user) => (
               <TableRow key={user.id} onClick={() => handleRowClick(user)}>
-                <TableCell style={rowStyle}>{user.nombre}</TableCell>
-                <TableCell style={rowStyle}>{user.apellido}</TableCell>
-                <TableCell style={rowStyle}>{user.email}</TableCell>
-                <TableCell style={rowStyle}>{user.edad}</TableCell>
-                <TableCell style={rowStyle}>{user.sexo}</TableCell>
-                <TableCell style={rowStyle}>{user.disciplina}</TableCell>
-                <TableCell style={rowStyle}>{user.grado_academico}</TableCell>
-                <TableCell style={rowStyle}>
-                  {user.nombre_institucion}
-                </TableCell>
-                <TableCell style={rowStyle}>{user.nombre_pais}</TableCell>
+                <TableCell sx={rowStyle}>{user.nombre}</TableCell>
+                <TableCell sx={rowStyle}>{user.apellido}</TableCell>
+                <TableCell sx={rowStyle}>{user.email}</TableCell>
+                <TableCell sx={rowStyle}>{user.edad}</TableCell>
+                <TableCell sx={rowStyle}>{user.sexo}</TableCell>
+                <TableCell sx={rowStyle}>{user.disciplina}</TableCell>
+                <TableCell sx={rowStyle}>{user.grado_academico}</TableCell>
+                <TableCell sx={rowStyle}>{user.nombre_institucion}</TableCell>
+                <TableCell sx={rowStyle}>{user.nombre_pais}</TableCell>
 
                 <TableCell>
                   <EditIcon
