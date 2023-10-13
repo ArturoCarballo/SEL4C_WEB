@@ -314,7 +314,7 @@ app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
 });
 
 // Endpoint para eliminar un usuario en xcode
-app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
+app.delete('/api/usuarios/:id/xcode', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
   const { password } = req.body;
 
