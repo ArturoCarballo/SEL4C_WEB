@@ -3,7 +3,10 @@ const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
+
+const debug = require('debug')('myapp:email');
 
 
 const saltRounds = 10;
@@ -94,7 +97,50 @@ app.post('/api/subir_archivo', (req, res, next) => {
   });
 });
 
+// Configura el transporter de Nodemailer
+let transporter = nodemailer.createTransport({
+  host: 'smtp.ionos.mx',
+  port: 587,
+  secure: false,
+  auth: {
+      user: 'verificacion@sel4cequipo5.com',
+      pass: 'sel4cEquipo588#sel4cEquipo588#'
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+});
 
+// Envia un correo electrónico
+const sendVerificationEmail = async (toEmail, link) => {
+  try {
+    let info = await transporter.sendMail({
+      from: 'verificacion@sel4cequipo5.com',
+      to: toEmail,
+      subject: 'Please verify your email address',
+      text: `Click the following link to verify your email address: ${link}`,
+      html: `<b>Click the following link to verify your email address:</b> <a href="${link}">${link}</a>`
+  });
+
+  console.log('Message sent: %s', info.messageId);
+  debug('Message info: %O', info);
+  } catch(error) {
+    console.error('Error sending email: ', error);
+    debug('Email error: %O', error);
+  }
+  
+}
+
+// Ruta de prueba para verificar la funcionalidad de envío de correo electrónico
+app.get('/send-email', async (req, res) => {
+  try {
+      await sendVerificationEmail('a01662245@tec.mx', 'http://sel4cequipo5.com');
+      res.send('Email sent!');
+  } catch (error) {
+      console.error('Error sending email: ', error);
+      res.send('Error sending email.');
+  }
+});
 
 // Endpoint para obtener todos los usuarios
 app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
