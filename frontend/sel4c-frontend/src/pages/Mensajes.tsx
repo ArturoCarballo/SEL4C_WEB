@@ -26,9 +26,26 @@ const Mensajes: React.FC = () => {
 
     }, []);
 
-    const categorias = ["Todos", "Pregunta", "Duda", "Queja", "Comentario", "Problema", "Otro"];
+    const categorias = ["Todos", "Pregunta", "Duda", "Queja", "Comentario", "Problema", "Otro", "Oculto"];
 
-    const mensajesFiltrados = categoriaFiltrada === "Todos" ? mensajes : mensajes.filter(m => m.categoria === categoriaFiltrada);
+    const toggleOculto = (mensaje: Mensaje) => {
+        if (mensaje.categoria === "Oculto") {
+            if (window.confirm("¿Quieres mostrar este mensaje nuevamente?")) {
+                mensaje.categoria = "Otro";  // O la categoría que desees por defecto
+                setMensajes([...mensajes]);
+            }
+        } else {
+            if (window.confirm("¿Estás seguro de que quieres ocultar este mensaje?")) {
+                mensaje.categoria = "Oculto";
+                setMensajes([...mensajes]);
+            }
+        }
+    }
+
+    const mensajesFiltrados = categoriaFiltrada === "Todos" 
+    ? mensajes.filter(m => m.categoria !== "Oculto") 
+    : mensajes.filter(m => m.categoria === categoriaFiltrada);
+
 
     return (
         <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
@@ -59,6 +76,7 @@ const Mensajes: React.FC = () => {
                     onMouseOut={(e) => {
                         e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.1)";
                     }}
+                    onClick={() => toggleOculto(mensaje)}
                 >
                     <h3 style={{ borderBottom: "1px solid #eee", paddingBottom: "10px", fontWeight: "bold", color: "navy", fontSize: "25px" }}>{mensaje.categoria}</h3>
                     <p>{mensaje.mensaje}</p>
