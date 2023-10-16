@@ -647,15 +647,21 @@ app.post('/api/guardarRespuestas', authMiddleware, async (req, res) => {
 });
 
 // Enviar mensajes
-app.post('/api/mensajes', authMiddleware, async (req, res) => {
-  const {id, categoria, mensaje} = req.body;
+app.post('/api/mensaje', authMiddleware, async (req, res) => {
+  const {categoria, mensaje, idusuario } = req.body;
+
+  if (!categoria || !mensaje || !idusuario) {
+    return res.status(400).send('Parámetros incompletos');
+  }
+
+  const query = 'INSERT INTO mensaje (categoria, mensaje, idusuario) VALUES (?, ?, ?)';
 
   try {
-    res.status(200).json({success: true, message: "Mensaje recibido de " + id, categ: categoria, men: mensaje})
-
+    const [results] = await pool.execute(query, [categoria, mensaje, idusuario]);
+    res.status(200).send('Mensaje insertado exitosamente.');
   } catch (error) {
-    console.error('Error al guardar las respuestas:', error);
-    res.status(500).json({ success: false, message: "Hubo un error al guardar las respuestas." });
+    console.error('Error al insertar el mensaje:', error);
+    res.status(500).send('Error al insertar el mensaje.');
   }
 });
 
