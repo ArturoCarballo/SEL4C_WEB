@@ -42,6 +42,9 @@ const Navbar: React.FC = () => {
             <Button style={buttonStyle} component={Link} to="/admins">
               Admins
             </Button>
+            <Button style={buttonStyle} component={Link} to="/mensajes">
+              Mensajes
+            </Button>
           </ButtonGroup>
           <LogoutButton></LogoutButton>
           {/* ... Add as many buttons as needed for other routes ... */}

@@ -99,12 +99,12 @@ app.post('/api/subir_archivo', (req, res, next) => {
 
 // Configura el transporter de Nodemailer
 let transporter = nodemailer.createTransport({
-  host: 'smtp.ionos.mx',
+  host: 'smtp-relay.brevo.com',
   port: 587,
   secure: false,
   auth: {
-      user: 'verificacion@sel4cequipo5.com',
-      pass: 'sel4cEquipo588#sel4cEquipo588#'
+      user: 'sel4cequipo5@gmail.com',
+      pass: 'ymZHUjXxT07Cgh5O'
   },
   tls: {
     rejectUnauthorized: false
@@ -115,7 +115,7 @@ let transporter = nodemailer.createTransport({
 const sendVerificationEmail = async (toEmail, link) => {
   try {
     let info = await transporter.sendMail({
-      from: 'verificacion@sel4cequipo5.com',
+      from: 'sel4cequipo5@gmail.com',
       to: toEmail,
       subject: 'Please verify your email address',
       text: `Click the following link to verify your email address: ${link}`,
@@ -134,7 +134,7 @@ const sendVerificationEmail = async (toEmail, link) => {
 // Ruta de prueba para verificar la funcionalidad de envío de correo electrónico
 app.get('/send-email', async (req, res) => {
   try {
-      await sendVerificationEmail('a01662245@tec.mx', 'http://sel4cequipo5.com');
+      await sendVerificationEmail('antonomach@gmail.com', 'http://sel4cequipo5.com');
       res.send('Email sent!');
   } catch (error) {
       console.error('Error sending email: ', error);
@@ -639,6 +639,19 @@ app.post('/api/guardarRespuestas', authMiddleware, async (req, res) => {
     `;
     await pool.execute(queryUpdate, [idUsuario]);
     res.json({ success: true, message: "Respuestas guardadas correctamente." });
+
+  } catch (error) {
+    console.error('Error al guardar las respuestas:', error);
+    res.status(500).json({ success: false, message: "Hubo un error al guardar las respuestas." });
+  }
+});
+
+// Enviar mensajes
+app.post('/api/mensajes', authMiddleware, async (req, res) => {
+  const {id, categoria, mensaje} = req.body;
+
+  try {
+    res.status(200).json({success: true, message: "Mensaje recibido de " + id, categ: categoria, men: mensaje})
 
   } catch (error) {
     console.error('Error al guardar las respuestas:', error);
