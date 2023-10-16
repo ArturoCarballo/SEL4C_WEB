@@ -665,6 +665,16 @@ app.post('/api/mensaje', authMiddleware, async (req, res) => {
   }
 });
 
+// Get de todos los mensajes
+app.get('/api/mensaje', authMiddleware, async (req, res) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM mensaje');
+    res.json(rows)
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Middleware para manejar errores
 function errorHandler(err, req, res, next) {
   console.error(err);
