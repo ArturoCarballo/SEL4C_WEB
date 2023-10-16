@@ -520,6 +520,31 @@ app.get('/api/usuarios/:id/respuestas/:idcuestionario', authMiddleware, async (r
   }
 });
 
+// Endpoint para tener la respuesta de un usuario y graficarlas en la de barras
+app.get('/api/usuarios/:id/respuestas/:idcuestionario/grafica', authMiddleware, async (req, res, next) => {
+  const { id, idcuestionario } = req.params;
+  try {
+    const query = `
+    SELECT pregunta.id, answer.idanswer, competencia.competenciacol
+    FROM respuesta
+    JOIN pregunta ON respuesta.idpregunta = pregunta.id
+    JOIN answer ON respuesta.idanswer = answer.idanswer
+    JOIN competencia ON pregunta.competencia = competencia.idcompetencia
+    WHERE respuesta.idusuario = ? AND respuesta.idcuestionario = ?;
+      `;
+
+    const [rows] = await pool.execute(query, [id, idcuestionario]);
+    if (rows.length > 0) {
+      res.json(rows);
+    } else {
+      res.status(404).json({ message: "No se encontraron respuestas para este usuario y cuestionario." });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 // Endpoint para tener la respuesta del cuestionario filtradas
 app.get('/api/respuestas/cuestionario/:idcuestionario', authMiddleware, async (req, res, next) => {
   const { idcuestionario } = req.params;

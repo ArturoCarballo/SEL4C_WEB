@@ -3,6 +3,7 @@ import { User } from '../interface/User';
 import { getUserById } from '../services/User.services';
 import { useParams } from 'react-router-dom';
 import { UserAnswers } from './UserAnswers';
+import CompetenciasChart from './Grafica';
 import './UserProfile.css'
 
 const UserProfile: React.FC = () => {
@@ -32,7 +33,7 @@ const UserProfile: React.FC = () => {
                 <UserAnswers id={user.id || 0} idcuestionario = {1} />
                 <UserAnswers id={user.id || 0} idcuestionario = {2} />
             </div>
-            {/* y así sucesivamente para otros campos del usuario... */}
+            <CompetenciasChart id={user.id} idcuestionario={1}></CompetenciasChart>
         </div>
     );
 }
