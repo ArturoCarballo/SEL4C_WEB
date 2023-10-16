@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { fetchCompetencias } from '../services/Grafica.services';
 import { DataEntry } from '../interface/DataEntry';
+import { useParams } from 'react-router-dom';
 
 const processData = (data: DataEntry[]): {name: string, value: number}[] => {
     const resultMap = new Map<string, number>();
@@ -20,6 +21,7 @@ interface CompetenciasChartProps {
 
 const CompetenciasChart: React.FC<CompetenciasChartProps> = ({ id, idcuestionario }) => {
     const [chartData, setChartData] = useState<{name: string, value: number}[]>([]);
+    const { idusuario } = useParams<{ idusuario: string }>();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,7 +35,21 @@ const CompetenciasChart: React.FC<CompetenciasChartProps> = ({ id, idcuestionari
         }
 
         fetchData();
-    }, []);
+    }, [id, idcuestionario]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const rawData = await fetchCompetencias(Number(idusuario), idcuestionario);
+                const processedData = processData(rawData);
+                setChartData(processedData);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        fetchData();
+    }, [idusuario, idcuestionario]);
 
     return (
         <BarChart
