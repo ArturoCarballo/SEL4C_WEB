@@ -521,7 +521,7 @@ app.get('/api/usuarios/:id/respuestas/:idcuestionario', authMiddleware, async (r
 });
 
 // Endpoint para tener la respuesta de un usuario y graficarlas en la de barras
-app.get('/api/usuarios/:id/respuestas/:idcuestionario/grafica', authMiddleware, async (req, res, next) => {
+app.get('/api/usuarios/:id/respuestas/:idcuestionario/grafica', async (req, res, next) => {
   const { id, idcuestionario } = req.params;
   try {
     const query = `
