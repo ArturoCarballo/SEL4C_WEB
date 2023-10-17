@@ -97,6 +97,17 @@ app.post('/api/subir_archivo', (req, res, next) => {
   });
 });
 
+// Genera un código de verificación aleatorio de 6 dígitos
+const generateVerificationCode = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+async function storeVerificationCode(email, code) {
+  const [rows] = await connection.execute('INSERT INTO verification_code (email, code) VALUES (?, ?)', [email, code]);
+  return rows;
+}
+
+
 // Configura el transporter de Nodemailer
 let transporter = nodemailer.createTransport({
   host: 'smtp-relay.brevo.com',
@@ -111,34 +122,46 @@ let transporter = nodemailer.createTransport({
   }
 });
 
-// Envia un correo electrónico
-const sendVerificationEmail = async (toEmail, link) => {
+// Envia un correo electrónico con código de verificación
+const sendVerificationEmailWithCode = async (toEmail, code) => {
   try {
     let info = await transporter.sendMail({
       from: 'sel4cequipo5@gmail.com',
       to: toEmail,
       subject: 'Please verify your email address',
-      text: `Click the following link to verify your email address: ${link}`,
-      html: `<b>Click the following link to verify your email address:</b> <a href="${link}">${link}</a>`
-  });
+      text: `Your verification code is: ${code}`,
+      html: `<b>Your verification code is:</b> ${code}`
+    });
 
-  console.log('Message sent: %s', info.messageId);
-  debug('Message info: %O', info);
+    console.log('Message sent: %s', info.messageId);
+    debug('Message info: %O', info);
   } catch(error) {
     console.error('Error sending email: ', error);
     debug('Email error: %O', error);
   }
-  
-}
+};
 
-// Ruta de prueba para verificar la funcionalidad de envío de correo electrónico
-app.get('/send-email', async (req, res) => {
-  try {
-      await sendVerificationEmail('antonomach@gmail.com', 'http://sel4cequipo5.com');
-      res.send('Email sent!');
-  } catch (error) {
-      console.error('Error sending email: ', error);
-      res.send('Error sending email.');
+app.post('/register', async (req, res) => {
+  const { email } = req.body;
+  
+  const code = generateVerificationCode();
+  
+  await storeVerificationCode(email, code);
+
+  await sendVerificationEmailWithCode(email, `Your verification code is: ${code}`);
+  
+  res.send('Registration successful! Please verify your email.');
+});
+
+app.post('/verify-email', async (req, res) => {
+  const { email, code } = req.body;
+
+  const [rows] = await connection.execute('SELECT code FROM verification_code WHERE email = ?', [email]);
+  if (rows.length && rows[0].code === code) {
+      await connection.execute('UPDATE users SET is_verified = 1 WHERE email = ?', [email]);
+      res.send('Email verified successfully!');
+  } else {
+      res.send('Invalid verification code.');
   }
 });
 
