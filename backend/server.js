@@ -103,7 +103,12 @@ const generateVerificationCode = () => {
 };
 
 async function storeVerificationCode(email, code) {
-  const [rows] = await pool.execute('INSERT INTO verification_code (email, code) VALUES (?, ?)', [email, code]);
+  const query = `
+    INSERT INTO verification_code (email, code)
+    VALUES (?, ?)
+    ON DUPLICATE KEY UPDATE code = ?
+  `;
+  const [rows] = await pool.execute(query, [email, code, code]);
   return rows;
 }
 
