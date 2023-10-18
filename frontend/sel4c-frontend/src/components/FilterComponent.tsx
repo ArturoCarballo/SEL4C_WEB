@@ -27,11 +27,11 @@ interface FilterComponentProps {
     apellido: string;
     email: string;
     sexo: {
-      Masculino: boolean,
-      Femenino: boolean,
-      "No binario": boolean,
-      "Prefiero no decir": boolean,
-    }
+      Masculino: boolean;
+      Femenino: boolean;
+      "No binario": boolean;
+      "Prefiero no decir": boolean;
+    };
   };
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -45,11 +45,11 @@ interface FilterComponentProps {
       apellido: string;
       email: string;
       sexo: {
-        Masculino: boolean,
-        Femenino: boolean,
-        "No binario": boolean,
-        "Prefiero no decir": boolean,
-      }
+        Masculino: boolean;
+        Femenino: boolean;
+        "No binario": boolean;
+        "Prefiero no decir": boolean;
+      };
     }>
   >;
 }
@@ -60,20 +60,23 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 }) => {
   const [instituciones, setInstituciones] = useState<Institucion[]>([]);
   const [paises, setPaises] = useState<Pais[]>([]);
-  type SexoValue = "Masculino" | "Femenino" | "No binario" | "Prefiero no decir";
+  type SexoValue =
+    | "Masculino"
+    | "Femenino"
+    | "No binario"
+    | "Prefiero no decir";
 
-
-  const handleSexoChange = (sexoValue: keyof typeof filters.sexo) => 
-  (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      sexo: {
-        ...prevFilters.sexo,
-        [sexoValue]: event.target.checked
-      }
-    }));
-};
-
+  const handleSexoChange =
+    (sexoValue: keyof typeof filters.sexo) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        sexo: {
+          ...prevFilters.sexo,
+          [sexoValue]: event.target.checked,
+        },
+      }));
+    };
 
   useEffect(() => {
     const loadData = async () => {
@@ -101,7 +104,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
     loadData();
   }, []);
 
-  const [value, setValue] = React.useState<number[]>([0, 100]);
+  const [value, setValue] = React.useState<number[]>([0, 150]);
 
   const handleSliderChange = (
     event: Event,
@@ -162,6 +165,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
     width: "100%",
     height: "50px",
     backgroundColor: "#dfecff",
+    color: "navy",
   };
   const wordLabelStyle: React.CSSProperties = {
     fontWeight: "bold",
@@ -182,7 +186,6 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
   };
 
   return (
-
     <div>
       <div style={{ alignItems: "center" }}>
         <Typography

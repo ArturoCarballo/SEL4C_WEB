@@ -9,18 +9,16 @@ const LogoutButton: React.FC = () => {
 
   return (
     <Button
-      variant="contained"
       style={{
         fontSize: "20px",
         fontWeight: "bold",
         color: "white",
         backgroundColor: "red",
-        border: "10px",
         marginInline: "2px",
         margin: "2px", // Set margin
         borderRadius: "5px",
-        textTransform: "none",
         padding: "2px 10px", // Set padding to match margin (adjust as needed)
+        textTransform: "none",
       }}
       onClick={logout}
     >

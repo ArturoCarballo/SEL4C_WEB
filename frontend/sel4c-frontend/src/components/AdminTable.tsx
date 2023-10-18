@@ -22,6 +22,32 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LogoutButton from "./LogoutButton";
 
+const buttonStyle: React.CSSProperties = {
+  fontSize: "20px",
+  fontWeight: "bold",
+  backgroundColor: "navy",
+  color: "white",
+  border: "0px",
+  marginInline: "25px",
+  margin: "2px", // Set margin
+  borderRadius: "5px",
+  padding: "2px 10px", // Set padding to match margin (adjust as needed)
+  textTransform: "none",
+};
+
+const headerStyle: React.CSSProperties = {
+  fontWeight: "bold",
+  color: "navy",
+  fontSize: "15px",
+};
+
+const wordLabelStyle: React.CSSProperties = {
+  fontWeight: "bold",
+  color: "navy",
+  fontSize: "25px",
+  marginTop: "20px",
+};
+
 export const AdminTable: React.FC = () => {
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [sortedAdmins, setSortedAdmins] = useState<Admin[]>([]);
@@ -79,25 +105,29 @@ export const AdminTable: React.FC = () => {
     setSortConfig({ key, direction });
   };
 
-    const handleDeleteAdmin= async (id: number) => {
-        const authAdminId: string | null = localStorage.getItem("admin_id");
-        const authAdminIdNumber: number = authAdminId ? parseInt(authAdminId) : -1;
+  const handleDeleteAdmin = async (id: number) => {
+    const authAdminId: string | null = localStorage.getItem("admin_id");
+    const authAdminIdNumber: number = authAdminId ? parseInt(authAdminId) : -1;
 
-        if (id === authAdminIdNumber) {
-            alert('No puedes eliminarte a ti mismo.');
-            return;
-        }
-        const shouldDelete = window.confirm('¿Estás seguro de que quieres eliminar este admin?');
+    if (id === authAdminIdNumber) {
+      alert("No puedes eliminarte a ti mismo.");
+      return;
+    }
+    const shouldDelete = window.confirm(
+      "¿Estás segurx de que quieres eliminar este admin?"
+    );
 
-        if (shouldDelete) {
-            try {
-                await deleteAdmin(id);
-                setAdmins(prevAdmins => prevAdmins.filter(admin => admin.id !== id));
-            } catch (error) {
-                console.error("Error deleting admin: ", error);
-            }
-        }
-    };
+    if (shouldDelete) {
+      try {
+        await deleteAdmin(id);
+        setAdmins((prevAdmins) =>
+          prevAdmins.filter((admin) => admin.id !== id)
+        );
+      } catch (error) {
+        console.error("Error borrando admin: ", error);
+      }
+    }
+  };
 
   const handleAddAdmin = async (admin: Admin) => {
     try {
@@ -106,35 +136,37 @@ export const AdminTable: React.FC = () => {
       setAdmins(updatedAdmins);
       return newAdmin;
     } catch (error) {
-      console.error("Error adding admin: ", error);
+      console.error("Error agregando a admin: ", error);
       throw error;
     }
   };
 
-    const handleEditAdmin = async (admin: Admin) => {
-        const authAdminId: string | null = localStorage.getItem("admin_id");
-        const authAdminIdNumber: number = authAdminId ? parseInt(authAdminId) : -1;
-        if (admin.id !== authAdminIdNumber) {
-            throw new Error('Solo puedes editar tu propia información.');
-        }
-        try {
-            const updatedAdmin = await updateAdmin(admin);
-            setAdmins(prevAdmins => prevAdmins.map(a => a.id === admin.id ? updatedAdmin : a));
-            return updatedAdmin;
-        } catch (error) {
-            console.error("Error updating admin: ", error);
-            throw error;
-        }
-    };
-  
+  const handleEditAdmin = async (admin: Admin) => {
+    const authAdminId: string | null = localStorage.getItem("admin_id");
+    const authAdminIdNumber: number = authAdminId ? parseInt(authAdminId) : -1;
+    if (admin.id !== authAdminIdNumber) {
+      throw new Error("Solo puedes editar tu propia información.");
+    }
+    try {
+      const updatedAdmin = await updateAdmin(admin);
+      setAdmins((prevAdmins) =>
+        prevAdmins.map((a) => (a.id === admin.id ? updatedAdmin : a))
+      );
+      return updatedAdmin;
+    } catch (error) {
+      console.error("Error actualizando admin: ", error);
+      throw error;
+    }
+  };
 
   return (
-    <div>
-      <h2>Admins</h2>
+    <div style={{ margin: "20px" }}>
+      <h2 style={wordLabelStyle}>Admins</h2>
       <Button
         variant="contained"
         color="primary"
         onClick={() => setIsAddingAdmin(true)}
+        style={buttonStyle}
       >
         Añadir Admin
       </Button>
@@ -160,11 +192,12 @@ export const AdminTable: React.FC = () => {
                 active={sortConfig?.key === "username"}
                 direction={sortConfig?.direction as "asc" | "desc" | undefined}
                 onClick={() => requestSort("username")}
+                style={headerStyle}
               >
                 Username
               </TableSortLabel>
             </TableCell>
-            <TableCell>Acciones</TableCell>
+            <TableCell style={headerStyle}>Acciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
