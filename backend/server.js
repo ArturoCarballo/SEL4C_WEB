@@ -109,7 +109,15 @@ async function storeVerificationCode(email, code) {
     ON DUPLICATE KEY UPDATE code = ?
   `;
   const [rows] = await pool.execute(query, [email, code, code]);
-  return rows;
+  
+  // Si el correo electrónico ya existe, recupera su ID
+  if (rows.affectedRows === 0) {
+    const [existingRows] = await pool.execute('SELECT id FROM verification_code WHERE email = ?', [email]);
+    return existingRows[0].id;
+  }
+
+  // Si es una nueva inserción, devuelve el ID insertado
+  return rows.insertId;
 }
 
 
@@ -155,7 +163,7 @@ app.post('/register', async (req, res) => {
 
   await sendVerificationEmailWithCode(email, `Your verification code is: ${code}`);
   
-  res.send('Registration successful! Please verify your email.');
+  res.json({ message: 'Registration successful! Please verify your email.', userId });
 });
 
 app.post('/verify-email', async (req, res) => {
