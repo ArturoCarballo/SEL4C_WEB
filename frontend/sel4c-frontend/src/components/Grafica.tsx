@@ -4,15 +4,19 @@ import { fetchCompetencias } from '../services/Grafica.services';
 import { DataEntry } from '../interface/DataEntry';
 import { useParams } from 'react-router-dom';
 
-const processData = (data: DataEntry[]): {name: string, value: number}[] => {
-    const resultMap = new Map<string, number>();
+const processData = (data: DataEntry[]): { name: string, value: number }[] => {
+    const resultMap = new Map<string, Array<number>>();
 
     data.forEach(entry => {
-        resultMap.set(entry.competenciacol, (resultMap.get(entry.competenciacol) || 0) + 1);
+        if (!resultMap.has(entry.competenciacol)) {
+            resultMap.set(entry.competenciacol, []);
+        }
+        resultMap.get(entry.competenciacol)!.push(entry.idanswer);
     });
 
-    return Array.from(resultMap).map(([name, value]) => ({ name, value }));
+    return Array.from(resultMap).map(([name, values]) => ({ name, value: values.reduce((acc, val) => acc + val, 0) }));
 }
+
 
 interface CompetenciasChartProps {
     id?: number;
@@ -28,6 +32,7 @@ const CompetenciasChart: React.FC<CompetenciasChartProps> = ({ id, idcuestionari
             try {
                 const rawData = await fetchCompetencias(id!, idcuestionario);
                 const processedData = processData(rawData);
+                console.log(processedData);
                 setChartData(processedData);
             } catch (error) {
                 console.error("Error fetching data:", error);

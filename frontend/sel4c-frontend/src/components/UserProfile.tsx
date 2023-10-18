@@ -33,7 +33,11 @@ const UserProfile: React.FC = () => {
                 <UserAnswers id={user.id || 0} idcuestionario = {1} />
                 <UserAnswers id={user.id || 0} idcuestionario = {2} />
             </div>
-            <CompetenciasChart id={user.id} idcuestionario={1}></CompetenciasChart>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <CompetenciasChart id={user.id} idcuestionario={1}></CompetenciasChart>
+                <CompetenciasChart id={user.id} idcuestionario={2}></CompetenciasChart>
+            </div>
+            
         </div>
     );
 }

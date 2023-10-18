@@ -12,7 +12,7 @@ import Mensajes from "./pages/Mensajes";
 import { AdminTable } from "./components/AdminTable";
 import UserProfile from "./components/UserProfile";
 import Navbar from "./components/Navbar";
-import CompetenciasChart from "./components/Grafica";
+import GraficasPage from "./pages/Graficas";
 
 function MainApp() {
   const location = useLocation();
@@ -24,7 +24,7 @@ function MainApp() {
 
 
       <Routes>
-        <Route path="/grafica/:idusuario" element={<CompetenciasChart idcuestionario={1}/>} />
+        <Route path="/grafica/:idusuario" element={<GraficasPage/>} />
         <Route path="/" element={<PrivateRoute />}>
           <Route path="/perfil/:id" element={<UserProfile />} />
           <Route path="/users" element={<Usuarios />} />
