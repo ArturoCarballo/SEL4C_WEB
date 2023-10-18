@@ -60,6 +60,9 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 }) => {
   const [instituciones, setInstituciones] = useState<Institucion[]>([]);
   const [paises, setPaises] = useState<Pais[]>([]);
+  const [nombreError, setNombreError] = useState(false);
+  const [apellidoError, setApellidoError] = useState(false);
+
   type SexoValue =
     | "Masculino"
     | "Femenino"
@@ -68,15 +71,15 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 
   const handleSexoChange =
     (sexoValue: keyof typeof filters.sexo) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        sexo: {
-          ...prevFilters.sexo,
-          [sexoValue]: event.target.checked,
-        },
-      }));
-    };
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFilters((prevFilters) => ({
+          ...prevFilters,
+          sexo: {
+            ...prevFilters.sexo,
+            [sexoValue]: event.target.checked,
+          },
+        }));
+      };
 
   useEffect(() => {
     const loadData = async () => {
@@ -196,8 +199,18 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
         </Typography>
         <TextField
           value={filters.nombre || ""}
-          onChange={(e) => setFilters({ ...filters, nombre: e.target.value })}
+          onChange={(e) => {
+            if (/^[a-zA-Z\s]*$/.test(e.target.value) || e.target.value === "") {
+              setNombreError(false);
+              setFilters({ ...filters, nombre: e.target.value });
+            } else {
+              setNombreError(true);
+            }
+          }}
           style={textboxStyle}
+  error={nombreError}
+  helperText={nombreError ? "Solo se permiten letras" : ""}
+
         />
 
         <Typography variant="h6" style={wordLabelStyle}>
@@ -205,8 +218,17 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
         </Typography>
         <TextField
           value={filters.apellido || ""}
-          onChange={(e) => setFilters({ ...filters, apellido: e.target.value })}
+          onChange={(e) => {
+            if (/^[a-zA-Z\s]*$/.test(e.target.value) || e.target.value === "") {
+              setApellidoError(false);
+              setFilters({ ...filters, apellido: e.target.value });
+            } else {
+              setApellidoError(true);
+            }
+          }}
           style={textboxStyle}
+          error={apellidoError}
+          helperText={apellidoError ? "Solo se permiten letras" : ""}
         />
 
         <Typography variant="h6" style={wordLabelStyle}>

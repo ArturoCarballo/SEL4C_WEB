@@ -716,7 +716,7 @@ app.post('/api/mensaje', authMiddleware, async (req, res) => {
 // Get de todos los mensajes
 app.get('/api/mensaje', authMiddleware, async (req, res) => {
   try {
-    const [rows] = await pool.execute('SELECT * FROM mensaje');
+    const [rows] = await pool.execute('SELECT mensaje.*, usuario.email FROM mensaje join usuario ON mensaje.idusuario = usuario.id');
     res.json(rows)
   } catch (error) {
     next(error);
