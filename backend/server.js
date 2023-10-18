@@ -109,10 +109,7 @@ async function storeVerificationCode(email, code) {
 
     // Si no hay ningún usuario con ese email, regresa un mensaje de error
     if (userRows.length === 0) {
-      return {
-        success: false,
-        message: 'Email not found in usuarios table'
-      };
+      return userId;
     }
 
     const userId = userRows[0].id;
@@ -127,16 +124,10 @@ async function storeVerificationCode(email, code) {
     await pool.execute(query, [email, code, code]);
 
     // Regresa el ID del usuario
-    return {
-      success: true,
-      userId: userId
-    };
+    return userId;
   } catch (error) {
     console.error('Error storing verification code:', error.message);
-    return {
-      success: false,
-      message: error.message
-    };
+    return userId;
   }
 }
 
