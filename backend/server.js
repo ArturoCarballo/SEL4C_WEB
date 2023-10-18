@@ -159,7 +159,7 @@ app.post('/register', async (req, res) => {
   
   const code = generateVerificationCode();
   
-  await storeVerificationCode(email, code);
+  const userId = await storeVerificationCode(email, code);
 
   await sendVerificationEmailWithCode(email, `Your verification code is: ${code}`);
   
