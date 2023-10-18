@@ -103,22 +103,34 @@ const generateVerificationCode = () => {
 };
 
 async function storeVerificationCode(email, code) {
-  const query = `
-    INSERT INTO verification_code (email, code)
-    VALUES (?, ?)
-    ON DUPLICATE KEY UPDATE code = ?
-  `;
-  const [rows] = await pool.execute(query, [email, code, code]);
-  
-  // Si el correo electrónico ya existe, recupera su ID
-  if (rows.affectedRows === 0) {
-    const [existingRows] = await pool.execute('SELECT id FROM verification_code WHERE email = ?', [email]);
-    return existingRows[0].id;
-  }
+  try {
+    // Verifica si el email ya existe en la tabla 'usuario'
+    const [userRows] = await pool.execute('SELECT id FROM usuario WHERE email = ?', [email]);
 
-  // Si es una nueva inserción, devuelve el ID insertado
-  return rows.insertId;
+    // Si no hay ningún usuario con ese email, arroja un error
+    if (userRows.length === 0) {
+      throw new Error('Email not found in usuarios table');
+    }
+
+    const userId = userRows[0].id;
+
+    // Si el email existe en la tabla 'usuario', inserta o actualiza el código en 'verification_code'
+    const query = `
+      INSERT INTO verification_code (email, code)
+      VALUES (?, ?)
+      ON DUPLICATE KEY UPDATE code = ?
+    `;
+
+    await pool.execute(query, [email, code, code]);
+
+    // Regresa el ID del usuario
+    return userId;
+  } catch (error) {
+    console.error('Error storing verification code:', error.message);
+    throw error;
+  }
 }
+
 
 
 // Configura el transporter de Nodemailer
