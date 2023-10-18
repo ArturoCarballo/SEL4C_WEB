@@ -16,6 +16,11 @@ import GraficasPage from "./pages/Graficas";
 
 function MainApp() {
   const location = useLocation();
+  const isAuthenticated = localStorage.getItem('admin_token');
+
+  if (isAuthenticated && location.pathname === "/") {
+    return <Navigate to="/users" />;
+  }
 
   return (
     <>
@@ -38,10 +43,11 @@ function MainApp() {
 }
 
 function App() {
+  const isAuthenticated = localStorage.getItem('admin_token');
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={ isAuthenticated ? <Navigate to="/users" /> : <Login /> } />
         <Route path="*" element={<MainApp />} />
       </Routes>
     </Router>

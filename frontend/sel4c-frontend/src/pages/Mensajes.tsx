@@ -153,7 +153,7 @@ const Mensajes: React.FC = () => {
                 fontStyle: "italic",
               }}
             >
-              Enviado por usuario {mensaje.idusuario} : {mensaje.correoUsuario}
+              Enviado por usuario {mensaje.idusuario} : {mensaje.email}
             </small>
           </div>
         );
