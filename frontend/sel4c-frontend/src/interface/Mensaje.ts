@@ -4,4 +4,5 @@ export interface Mensaje {
     mensaje: string;
     idusuario: number;
     categoriaOriginal?: string;
+    correoUsuario?: string
   }
