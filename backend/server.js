@@ -107,9 +107,12 @@ async function storeVerificationCode(email, code) {
     // Verifica si el email ya existe en la tabla 'usuario'
     const [userRows] = await pool.execute('SELECT id FROM usuario WHERE email = ?', [email]);
 
-    // Si no hay ningún usuario con ese email, arroja un error
+    // Si no hay ningún usuario con ese email, regresa un mensaje de error
     if (userRows.length === 0) {
-      throw new Error('Email not found in usuarios table');
+      return {
+        success: false,
+        message: 'Email not found in usuarios table'
+      };
     }
 
     const userId = userRows[0].id;
@@ -124,13 +127,18 @@ async function storeVerificationCode(email, code) {
     await pool.execute(query, [email, code, code]);
 
     // Regresa el ID del usuario
-    return userId;
+    return {
+      success: true,
+      userId: userId
+    };
   } catch (error) {
     console.error('Error storing verification code:', error.message);
-    throw error;
+    return {
+      success: false,
+      message: error.message
+    };
   }
 }
-
 
 
 // Configura el transporter de Nodemailer
@@ -182,8 +190,10 @@ app.post('/verify-email', async (req, res) => {
   const { email, code } = req.body;
 
   const [rows] = await pool.execute('SELECT code FROM verification_code WHERE email = ?', [email]);
+  console.log(rows);
   if (rows.length && rows[0].code === code) {
       await pool.execute('UPDATE users SET is_verified = 1 WHERE email = ?', [email]);
+      console.log("Si se pudo");
       res.send('Email verified successfully!');
   } else {
       res.send('Invalid verification code.');
