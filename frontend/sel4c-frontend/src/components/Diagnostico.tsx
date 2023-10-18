@@ -14,7 +14,12 @@ type FiltersType = {
   nombre: string;
   apellido: string;
   email: string;
-  sexo: string;
+  sexo: {
+    Masculino: boolean;
+    Femenino: boolean;
+    "No binario": boolean;
+    "Prefiero no decir": boolean;
+  };
 };
 
 interface DiagnosticoProps {
@@ -103,6 +108,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
         selectedCuestionario={selectedCuestionario}
         setSelectedCuestionario={setSelectedCuestionario}
       />
+      <div style={{ display: "flex" }}></div>
       <div style={{ display: "flex" }}>
         {/*aquí para que estén las dos a la vez*/}
         <div style={{ flex: 1 }}>

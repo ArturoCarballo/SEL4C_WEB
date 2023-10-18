@@ -47,17 +47,6 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
           ))}
         </select>
       </label>
-
-      <label>
-        Selecciona Cuestionario:
-        <select
-          value={selectedCuestionario}
-          onChange={(e) => setSelectedCuestionario(Number(e.target.value))}
-        >
-          <option value={1}>1</option>
-          <option value={2}>2</option>
-        </select>
-      </label>
     </div>
   );
 };

@@ -1,17 +1,7 @@
 import React, { useState } from "react";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Checkbox,
-  FormControlLabel,
-} from "@material-ui/core";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import { Link } from "react-router-dom";
 import LogoutButton from "./LogoutButton";
 import { ButtonGroup } from "@mui/material";
@@ -52,8 +42,8 @@ const Navbar: React.FC = () => {
             <Button style={buttonStyle} component={Link} to="/admins">
               Admins
             </Button>
-            <Button style={buttonStyle} component={Link} to="/">
-              Bandeja
+            <Button style={buttonStyle} component={Link} to="/mensajes">
+              Mensajes
             </Button>
             <LogoutButton></LogoutButton>
           </ButtonGroup>

@@ -3,7 +3,10 @@ const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
+
+const debug = require('debug')('myapp:email');
 
 
 const saltRounds = 10;
@@ -76,9 +79,6 @@ app.post('/api/subir_archivo', (req, res, next) => {
       return res.status(400).json({ message: 'Required fields are missing.' });
     }
 
-    // Aquí faltan definiciones, como la de `idUsuario`. 
-    // Asegúrate de que esté definido antes de usarlo.
-
     try {
       // Aumenta el progreso del usuario
       let queryUpdate = `
@@ -86,11 +86,10 @@ app.post('/api/subir_archivo', (req, res, next) => {
           SET progreso = progreso + 1
           WHERE id = ?
       `;
-      await pool.execute(queryUpdate, [idUsuario]);
-      res.json({ success: true, message: "Respuestas guardadas correctamente." });
-
+      await pool.execute(queryUpdate, [user]);
       console.log(`Received video from ${user}. Saved as: ${req.file.filename}`);
-      res.send({ message: 'Video uploaded successfully!' });
+
+      res.json({ success: true, message: "Respuestas guardadas correctamente." });
     } catch (error) {
       console.error('Error updating progress:', error);
       res.status(500).json({ message: 'Internal server error' });
@@ -98,7 +97,73 @@ app.post('/api/subir_archivo', (req, res, next) => {
   });
 });
 
+// Genera un código de verificación aleatorio de 6 dígitos
+const generateVerificationCode = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
 
+async function storeVerificationCode(email, code) {
+  const [rows] = await connection.execute('INSERT INTO verification_code (email, code) VALUES (?, ?)', [email, code]);
+  return rows;
+}
+
+
+// Configura el transporter de Nodemailer
+let transporter = nodemailer.createTransport({
+  host: 'smtp-relay.brevo.com',
+  port: 587,
+  secure: false,
+  auth: {
+      user: 'sel4cequipo5@gmail.com',
+      pass: 'ymZHUjXxT07Cgh5O'
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+});
+
+// Envia un correo electrónico con código de verificación
+const sendVerificationEmailWithCode = async (toEmail, code) => {
+  try {
+    let info = await transporter.sendMail({
+      from: 'sel4cequipo5@gmail.com',
+      to: toEmail,
+      subject: 'Please verify your email address',
+      text: `Your verification code is: ${code}`,
+      html: `<b>Your verification code is:</b> ${code}`
+    });
+
+    console.log('Message sent: %s', info.messageId);
+    debug('Message info: %O', info);
+  } catch(error) {
+    console.error('Error sending email: ', error);
+    debug('Email error: %O', error);
+  }
+};
+
+app.post('/register', async (req, res) => {
+  const { email } = req.body;
+  
+  const code = generateVerificationCode();
+  
+  await storeVerificationCode(email, code);
+
+  await sendVerificationEmailWithCode(email, `Your verification code is: ${code}`);
+  
+  res.send('Registration successful! Please verify your email.');
+});
+
+app.post('/verify-email', async (req, res) => {
+  const { email, code } = req.body;
+
+  const [rows] = await connection.execute('SELECT code FROM verification_code WHERE email = ?', [email]);
+  if (rows.length && rows[0].code === code) {
+      await connection.execute('UPDATE users SET is_verified = 1 WHERE email = ?', [email]);
+      res.send('Email verified successfully!');
+  } else {
+      res.send('Invalid verification code.');
+  }
+});
 
 // Endpoint para obtener todos los usuarios
 app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
@@ -170,9 +235,16 @@ app.get('/api/usuarios', authMiddleware, async (req, res, next) => {
     params.push(`%${email}%`);
   }
 
-  if (sexo && sexo !== "") {
-    query += ' AND usuario.sexo = ?';
-    params.push(sexo);
+  if (sexo) {
+    if (Array.isArray(sexo)) { // Checar si es un array
+      // Usar placeholders '?' para cada valor en el array
+      const placeholders = sexo.map(() => '?').join(',');
+      query += ` AND usuario.sexo IN (${placeholders})`;
+      params.push(...sexo);
+    } else {
+      query += ' AND usuario.sexo = ?';
+      params.push(sexo);
+    }
   }
 
   try {
@@ -311,7 +383,7 @@ app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
 });
 
 // Endpoint para eliminar un usuario en xcode
-app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
+app.delete('/api/usuarios/:id/xcode', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
   const { password } = req.body;
 
@@ -471,6 +543,31 @@ app.get('/api/usuarios/:id/respuestas/:idcuestionario', authMiddleware, async (r
   }
 });
 
+// Endpoint para tener la respuesta de un usuario y graficarlas en la de barras
+app.get('/api/usuarios/:id/respuestas/:idcuestionario/grafica', async (req, res, next) => {
+  const { id, idcuestionario } = req.params;
+  try {
+    const query = `
+    SELECT pregunta.id, answer.idanswer, competencia.competenciacol
+    FROM respuesta
+    JOIN pregunta ON respuesta.idpregunta = pregunta.id
+    JOIN answer ON respuesta.idanswer = answer.idanswer
+    JOIN competencia ON pregunta.competencia = competencia.idcompetencia
+    WHERE respuesta.idusuario = ? AND respuesta.idcuestionario = ?;
+      `;
+
+    const [rows] = await pool.execute(query, [id, idcuestionario]);
+    if (rows.length > 0) {
+      res.json(rows);
+    } else {
+      res.status(404).json({ message: "No se encontraron respuestas para este usuario y cuestionario." });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 // Endpoint para tener la respuesta del cuestionario filtradas
 app.get('/api/respuestas/cuestionario/:idcuestionario', authMiddleware, async (req, res, next) => {
   const { idcuestionario } = req.params;
@@ -547,9 +644,16 @@ app.get('/api/respuestas/cuestionario/:idcuestionario', authMiddleware, async (r
     params.push(`%${email}%`);
   }
 
-  if (sexo && sexo !== "") {
-    query += ' AND usuario.sexo = ?';
-    params.push(sexo);
+  if (sexo) {
+    if (Array.isArray(sexo)) { // Checar si es un array
+      // Usar placeholders '?' para cada valor en el array
+      const placeholders = sexo.map(() => '?').join(',');
+      query += ` AND usuario.sexo IN (${placeholders})`;
+      params.push(...sexo);
+    } else {
+      query += ' AND usuario.sexo = ?';
+      params.push(sexo);
+    }
   }
 
   try {
@@ -587,6 +691,35 @@ app.post('/api/guardarRespuestas', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error al guardar las respuestas:', error);
     res.status(500).json({ success: false, message: "Hubo un error al guardar las respuestas." });
+  }
+});
+
+// Enviar mensajes
+app.post('/api/mensaje', authMiddleware, async (req, res) => {
+  const {categoria, mensaje, idusuario } = req.body;
+
+  if (!categoria || !mensaje || !idusuario) {
+    return res.status(400).send('Parámetros incompletos');
+  }
+
+  const query = 'INSERT INTO mensaje (categoria, mensaje, idusuario) VALUES (?, ?, ?)';
+
+  try {
+    const [results] = await pool.execute(query, [categoria, mensaje, idusuario]);
+    res.status(200).send('Mensaje insertado exitosamente.');
+  } catch (error) {
+    console.error('Error al insertar el mensaje:', error);
+    res.status(500).send('Error al insertar el mensaje.');
+  }
+});
+
+// Get de todos los mensajes
+app.get('/api/mensaje', authMiddleware, async (req, res) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM mensaje');
+    res.json(rows)
+  } catch (error) {
+    next(error);
   }
 });
 

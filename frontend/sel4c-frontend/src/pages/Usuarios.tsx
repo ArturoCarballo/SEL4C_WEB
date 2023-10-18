@@ -72,7 +72,12 @@ const Usuarios: React.FC = () => {
     nombre: "",
     apellido: "",
     email: "",
-    sexo: "",
+    sexo: {
+      Masculino: false,
+      Femenino: false,
+      "No binario": false,
+      "Prefiero no decir": false,
+    },
   });
 
   const [activeTab, setActiveTab] = useState("tabla");

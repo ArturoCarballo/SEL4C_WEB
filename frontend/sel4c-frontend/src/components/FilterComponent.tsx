@@ -26,7 +26,12 @@ interface FilterComponentProps {
     nombre: string;
     apellido: string;
     email: string;
-    sexo: string;
+    sexo: {
+      Masculino: boolean,
+      Femenino: boolean,
+      "No binario": boolean,
+      "Prefiero no decir": boolean,
+    }
   };
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -39,7 +44,12 @@ interface FilterComponentProps {
       nombre: string;
       apellido: string;
       email: string;
-      sexo: string;
+      sexo: {
+        Masculino: boolean,
+        Femenino: boolean,
+        "No binario": boolean,
+        "Prefiero no decir": boolean,
+      }
     }>
   >;
 }
@@ -50,22 +60,20 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 }) => {
   const [instituciones, setInstituciones] = useState<Institucion[]>([]);
   const [paises, setPaises] = useState<Pais[]>([]);
-  const [sexo, setSexo] = useState({
-    hombre: true, // defaultChecked
-    mujer: true, // defaultChecked
-    noBinarie: true, // defaultChecked
-    prefieroNoDecir: true, // defaultChecked
-  });
+  type SexoValue = "Masculino" | "Femenino" | "No binario" | "Prefiero no decir";
 
-  const handleSexoChange =
-    (sexoType: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.checked) {
-        setFilters((prev) => ({ ...prev, sexo: sexoType }));
-      } else {
-        // Uncheck. This is a simplified behavior. In reality, you might want to reset to a default or "all" value.
-        setFilters((prev) => ({ ...prev, sexo: "" }));
+
+  const handleSexoChange = (sexoValue: keyof typeof filters.sexo) => 
+  (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      sexo: {
+        ...prevFilters.sexo,
+        [sexoValue]: event.target.checked
       }
-    };
+    }));
+};
+
 
   useEffect(() => {
     const loadData = async () => {
@@ -218,20 +226,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             control={
               <Checkbox
                 style={checkedCheckboxStyle}
-                checked={filters.sexo === ""}
-                onChange={handleSexoChange("")}
-              />
-            }
-            label={<Typography style={optionLabelStyle}>Todo</Typography>}
-          />
-        </div>
-        <div style={optionContainerStyle}>
-          <FormControlLabel
-            style={{ marginLeft: "15px" }}
-            control={
-              <Checkbox
-                style={checkedCheckboxStyle}
-                checked={filters.sexo === "Masculino"}
+                checked={filters.sexo["Masculino"]}
                 onChange={handleSexoChange("Masculino")}
               />
             }
@@ -244,7 +239,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             control={
               <Checkbox
                 style={checkedCheckboxStyle}
-                checked={filters.sexo === "Femenino"}
+                checked={filters.sexo["Femenino"]}
                 onChange={handleSexoChange("Femenino")}
               />
             }
@@ -257,7 +252,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             control={
               <Checkbox
                 style={checkedCheckboxStyle}
-                checked={filters.sexo === "No binario"}
+                checked={filters.sexo["No binario"]}
                 onChange={handleSexoChange("No binario")}
               />
             }
@@ -272,7 +267,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             control={
               <Checkbox
                 style={checkedCheckboxStyle}
-                checked={filters.sexo === "Prefiero no decir"}
+                checked={filters.sexo["Prefiero no decir"]}
                 onChange={handleSexoChange("Prefiero no decir")}
               />
             }
