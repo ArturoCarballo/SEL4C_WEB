@@ -103,7 +103,7 @@ const generateVerificationCode = () => {
 };
 
 async function storeVerificationCode(email, code) {
-  const [rows] = await connection.execute('INSERT INTO verification_code (email, code) VALUES (?, ?)', [email, code]);
+  const [rows] = await pool.execute('INSERT INTO verification_code (email, code) VALUES (?, ?)', [email, code]);
   return rows;
 }
 
@@ -156,9 +156,9 @@ app.post('/register', async (req, res) => {
 app.post('/verify-email', async (req, res) => {
   const { email, code } = req.body;
 
-  const [rows] = await connection.execute('SELECT code FROM verification_code WHERE email = ?', [email]);
+  const [rows] = await pool.execute('SELECT code FROM verification_code WHERE email = ?', [email]);
   if (rows.length && rows[0].code === code) {
-      await connection.execute('UPDATE users SET is_verified = 1 WHERE email = ?', [email]);
+      await pool.execute('UPDATE users SET is_verified = 1 WHERE email = ?', [email]);
       res.send('Email verified successfully!');
   } else {
       res.send('Invalid verification code.');
