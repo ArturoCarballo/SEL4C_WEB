@@ -476,18 +476,25 @@ app.post('/api/usuarios/login', async (req, res, next) => {
 app.post('/api/admin/login', async (req, res, next) => {
   const { username, password } = req.body;
 
-  // Verifica el usuario y la contraseña
-  const [admin] = await pool.execute('SELECT * FROM admin WHERE username = ?', [username]);
+  try {
+    // Verifica el usuario y la contraseña
+    const [admin] = await pool.execute('SELECT * FROM admin WHERE username = ?', [username]);
 
-  if (!admin || !bcrypt.compareSync(password, admin[0].password)) {
-    return res.status(401).json({ error: 'Invalid credentials' });
-  }
+    if (!admin.length || !bcrypt.compareSync(password, admin[0].password)) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-  // Genera un token JWT
-  const token = jwt.sign({ id: admin[0].id }, process.env.SECRET_KEY, {
-    expiresIn: 86400 // 24 horas
-  });
-  res.json({ auth: true, token: token, id: admin[0].id });
+    // Genera un token JWT
+    const token = jwt.sign({ id: admin[0].id }, process.env.SECRET_KEY, {
+        expiresIn: 86400 // 24 horas
+    });
+
+    res.json({ auth: true, token: token, id: admin[0].id });
+
+} catch (error) {
+    console.error(error); // Log the error for debugging purposes
+    res.status(500).json({ error: 'Something went wrong. Please try again later.' });
+}
 });
 
 // Endpoint para preguntas
