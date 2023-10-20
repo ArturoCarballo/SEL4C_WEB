@@ -58,8 +58,8 @@ const CompetenciasChart: React.FC<CompetenciasChartProps> = ({ id, idcuestionari
 
     return (
         <BarChart
-            width={800}
-            height={600}
+            width={500}
+            height={400}
             data={chartData}
             margin={{
                 top: 5, right: 30, left: 20, bottom: 5,

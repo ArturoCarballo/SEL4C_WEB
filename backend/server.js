@@ -545,11 +545,66 @@ app.put('/api/admins/:id', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Endpoint para obtener todos los admins
+// Endpoint para eliminar un admin
+app.delete('/api/admins/:id', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    await pool.execute('DELETE FROM admin WHERE id = ?', [id]);
+    res.status(200).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para obtener todos las instituciones
 app.get('/api/instituciones', async (req, res, next) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM institucion');
     res.json(rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para poner una institucion
+app.post('/api/instituciones', async (req, res, next) => {
+  const { nombre_institucion } = req.body;
+
+  try {
+    const [result] = await pool.execute('INSERT INTO institucion (nombre_institucion) VALUES (?)', [nombre_institucion]);
+    res.status(201).json({ id: result.insertId });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para eliminar una institucion
+app.delete('/api/instituciones/:id', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    await pool.execute('DELETE FROM institucion WHERE idinstitucion = ?', [id]);
+    res.status(200).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para actualizar una institucion
+app.put('/api/instituciones/:id', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+  const { nombre_institucion } = req.body;
+
+  try {
+    await pool.execute(
+      'UPDATE institucion SET nombre_institucion = ? WHERE idinstitucion = ?',
+      [nombre_institucion, id]
+    );
+
+    const [rows] = await pool.execute('SELECT * FROM institucion WHERE idinstitucion = ?', [id]);
+    const updatedUser = rows[0];
+    res.status(200).json(updatedUser)
   } catch (error) {
     next(error);
   }

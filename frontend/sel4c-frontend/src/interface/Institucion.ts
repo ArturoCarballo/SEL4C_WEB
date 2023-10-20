@@ -1,4 +1,4 @@
 export interface Institucion {
-    idinstitucion: number;
+    idinstitucion?: number;
     nombre_institucion: string;
 }
