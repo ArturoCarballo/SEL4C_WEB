@@ -181,7 +181,6 @@ app.post('/verify-email', async (req, res) => {
   const { email, code } = req.body;
 
   const [rows] = await pool.execute('SELECT code FROM verification_code WHERE email = ?', [email]);
-  console.log(rows);
   if (rows.length && rows[0].code === code) {
       await pool.execute('UPDATE usuario SET is_verified = 1 WHERE email = ?', [email]);
       // Genera un token JWT
@@ -195,7 +194,7 @@ app.post('/verify-email', async (req, res) => {
 });
 
 // Endpoint para cambiar contraseña
-app.put('cambiar-contra', authMiddleware, async (req, res, next) => {
+app.put('cambiar-contra/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
   const { password } = req.body;
 
