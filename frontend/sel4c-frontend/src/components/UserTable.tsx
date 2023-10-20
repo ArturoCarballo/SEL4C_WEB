@@ -224,6 +224,30 @@ export const UserTable: React.FC<UserTableProps> = ({
     }
   };
 
+  const downloadCSV = (data: User[]) => {
+    const replacer = (key: string, value: any) => (value === null ? '' : value);
+    
+    if (data.length === 0) {
+      return; // Ensure data is not empty before proceeding
+    }
+    
+    const header = Object.keys(data[0]) as (keyof User)[];
+    const csv = [
+      header.join(','), // CSV header
+      ...data.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+    ].join('\r\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'usuarios.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   return (
     <div style={{ width: "500px" }}>
       <div style={{ flex: 1, marginRight: "20px" }}></div>
@@ -231,6 +255,9 @@ export const UserTable: React.FC<UserTableProps> = ({
         <h2 style={titleStyle}>Usuarios</h2>
         <Button style={buttonStyle} onClick={() => setIsAddingUser(true)}>
           Añadir Usuario
+        </Button>
+        <Button style={buttonStyle} onClick={() => downloadCSV(users)}>
+          Descargar CSV
         </Button>
         <TablePagination
           component="div"
