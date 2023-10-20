@@ -19,7 +19,7 @@ type FiltersType = {
   sexo: {
     Masculino: boolean;
     Femenino: boolean;
-    "No binario": boolean;
+    "No binarie": boolean;
     "Prefiero no decir": boolean;
   };
 };

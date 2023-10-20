@@ -77,7 +77,7 @@ const Usuarios: React.FC = () => {
     sexo: {
       Masculino: false,
       Femenino: false,
-      "No binario": false,
+      "No binarie": false,
       "Prefiero no decir": false,
     },
   });

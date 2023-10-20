@@ -29,7 +29,7 @@ interface FilterComponentProps {
     sexo: {
       Masculino: boolean;
       Femenino: boolean;
-      "No binario": boolean;
+      "No binarie": boolean;
       "Prefiero no decir": boolean;
     };
   };
@@ -47,7 +47,7 @@ interface FilterComponentProps {
       sexo: {
         Masculino: boolean;
         Femenino: boolean;
-        "No binario": boolean;
+        "No binarie": boolean;
         "Prefiero no decir": boolean;
       };
     }>
@@ -66,7 +66,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
   type SexoValue =
     | "Masculino"
     | "Femenino"
-    | "No binario"
+    | "No binarie"
     | "Prefiero no decir";
 
   const handleSexoChange =
@@ -276,8 +276,8 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             control={
               <Checkbox
                 style={checkedCheckboxStyle}
-                checked={filters.sexo["No binario"]}
-                onChange={handleSexoChange("No binario")}
+                checked={filters.sexo["No binarie"]}
+                onChange={handleSexoChange("No binarie")}
               />
             }
             label={
