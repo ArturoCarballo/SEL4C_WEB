@@ -184,7 +184,6 @@ app.post('/verify-email', async (req, res) => {
   console.log(rows);
   if (rows.length && rows[0].code === code) {
       await pool.execute('UPDATE usuario SET is_verified = 1 WHERE email = ?', [email]);
-      console.log("Si se pudo");
       // Genera un token JWT
       const token = jwt.sign({ id: email }, process.env.SECRET_KEY, {
         expiresIn: 86400 // 24 horas
