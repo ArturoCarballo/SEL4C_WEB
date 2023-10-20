@@ -375,7 +375,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 <TableCell sx={rowStyle}>{user.apellido}</TableCell>
                 <TableCell sx={rowStyle}>{user.email}</TableCell>
                 <TableCell sx={rowStyle}>{user.edad}</TableCell>
-                <TableCell sx={rowStyle}>{user.sexo}</TableCell>
+                <TableCell sx={rowStyle}>{user.sexo === 'Femenino' ? 'Mujer' : user.sexo === 'Masculino' ? 'Hombre' : user.sexo}</TableCell>
                 <TableCell sx={rowStyle}>{user.disciplina}</TableCell>
                 <TableCell sx={rowStyle}>{user.grado_academico}</TableCell>
                 <TableCell sx={rowStyle}>{user.nombre_institucion}</TableCell>
