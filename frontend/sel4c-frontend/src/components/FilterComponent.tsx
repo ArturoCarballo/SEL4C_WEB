@@ -318,11 +318,11 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
       >
         <TextField
           label={<Typography style={optionLabelStyle}></Typography>}
-          value={filters.minEdad || 0}
+          value={filters.minEdad || 18}
           variant="outlined"
           type="text"
           name="minEdad"
-          inputProps={{ pattern: "\\d*" }}
+          inputProps={{ pattern: "\\d*", min: "18" }}
           style={textboxStyle}
           onChange={handleTextFieldChange}
         />
@@ -337,11 +337,11 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
         ></Typography>
         <TextField
           label={<Typography style={optionLabelStyle}></Typography>}
-          value={filters.maxEdad || 0}
+          value={filters.maxEdad || 18}
           variant="outlined"
           type="text"
           name="maxEdad"
-          inputProps={{ pattern: "\\d*" }}
+          inputProps={{ pattern: "\\d*", min: "18" }}
           style={textboxStyle}
           onChange={handleTextFieldChange}
         />
@@ -350,6 +350,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
         getAriaLabel={() => "Edades"}
         //valueLabelDisplay="auto"
         value={value}
+        min={18}
         onChange={handleSliderChange}
         style={{
           marginLeft: "30px",
