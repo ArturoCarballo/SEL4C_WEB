@@ -418,9 +418,12 @@ app.get('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
 app.delete('/api/usuarios/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
 
-  await pool.execute('DELETE FROM respuesta WHERE idusuario = ?', [id]);
-  await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
   try {
+    // Primero elimina registros relacionados en las tablas 'respuesta' y 'mensaje'
+    await pool.execute('DELETE FROM respuesta WHERE idusuario = ?', [id]);
+    await pool.execute('DELETE FROM mensaje WHERE idusuario = ?', [id]);
+
+    // Después elimina el usuario
     await pool.execute('DELETE FROM usuario WHERE id = ?', [id]);
     res.status(200).send();
   } catch (error) {
