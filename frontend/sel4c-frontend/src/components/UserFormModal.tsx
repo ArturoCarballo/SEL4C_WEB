@@ -145,6 +145,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                   password: "",
                   nombre_institucion: "",
                   nombre_pais: "",
+                  progreso: 0
                 }
           }
           onSubmit={handleFormSubmit}
@@ -239,8 +240,8 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
                   value={values.sexo}
                   onChange={handleChange}
                 >
-                  <MenuItem value={"Hombre"}>Hombre</MenuItem>
-                  <MenuItem value={"Mujer"}>Mujer</MenuItem>
+                  <MenuItem value={"Masculino"}>Hombre</MenuItem>
+                  <MenuItem value={"Femenino"}>Mujer</MenuItem>
                   <MenuItem value={"No binarie"}>No binarie</MenuItem>
                   <MenuItem value={"Prefiero no decir"}>
                     Prefiero no decir

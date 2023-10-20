@@ -112,7 +112,7 @@ const Usuarios: React.FC = () => {
           ) : activeTab === "diagnostico" ? (
             <Diagnostico filters={filters} setFilters={setFilters} />
           ) : activeTab === "Actividades" ? (
-            <Actividades />
+            <Actividades filters={filters} setFilters={setFilters}/>
           ) : null}
         </div>
       </div>
