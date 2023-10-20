@@ -194,7 +194,7 @@ app.post('/verify-email', async (req, res) => {
 });
 
 // Endpoint para cambiar contraseña
-app.put('cambiar-contra/:id', authMiddleware, async (req, res, next) => {
+app.put('/cambiar-contra/:id', authMiddleware, async (req, res, next) => {
   const { id } = req.params;
   const { password } = req.body;
 
