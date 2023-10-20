@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const ExcelJS = require('exceljs');
 
 const debug = require('debug')('myapp:email');
 
@@ -831,6 +832,49 @@ app.get('/api/mensaje', authMiddleware, async (req, res) => {
     res.json(rows)
   } catch (error) {
     next(error);
+  }
+});
+
+// Tu endpoint para descargar el archivo Excel
+app.get('/download/excel', authMiddleware, async (req, res, next) => {
+  try {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Usuarios');
+
+      // Define las columnas del archivo Excel
+      worksheet.columns = [
+          { header: 'ID', key: 'id' },
+          { header: 'Apellido', key: 'apellido' },
+          { header: 'Disciplina', key: 'disciplina' },
+          { header: 'Email', key: 'email' },
+          { header: 'Edad', key: 'edad' },
+          { header: 'Sexo', key: 'sexo' },
+          { header: 'Grado Academico', key: 'grado_academico' },
+          { header: 'Institucion', key: 'institucion' },
+          { header: 'Nombre', key: 'nombre' },
+          { header: 'Pais', key: 'pais' },
+      ];
+
+      // Obtiene los datos de tu base de datos
+      const [users] = await pool.execute('SELECT * FROM usuario');
+
+      // Añade los datos al worksheet
+      users.forEach(user => {
+          worksheet.addRow(user);
+      });
+
+      // Define las configuraciones para la respuesta
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=usuarios.xlsx');
+
+      // Envía el archivo Excel como respuesta
+      workbook.xlsx.write(res)
+          .then(() => {
+              res.end();
+          });
+
+  } catch (error) {
+      next(error);
   }
 });
 
