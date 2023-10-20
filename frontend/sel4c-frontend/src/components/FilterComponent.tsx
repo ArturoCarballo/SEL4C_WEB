@@ -71,15 +71,15 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 
   const handleSexoChange =
     (sexoValue: keyof typeof filters.sexo) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        setFilters((prevFilters) => ({
-          ...prevFilters,
-          sexo: {
-            ...prevFilters.sexo,
-            [sexoValue]: event.target.checked,
-          },
-        }));
-      };
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        sexo: {
+          ...prevFilters.sexo,
+          [sexoValue]: event.target.checked,
+        },
+      }));
+    };
 
   useEffect(() => {
     const loadData = async () => {
@@ -208,9 +208,8 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
             }
           }}
           style={textboxStyle}
-  error={nombreError}
-  helperText={nombreError ? "Solo se permiten letras" : ""}
-
+          error={nombreError}
+          helperText={nombreError ? "Solo se permiten letras" : ""}
         />
 
         <Typography variant="h6" style={wordLabelStyle}>

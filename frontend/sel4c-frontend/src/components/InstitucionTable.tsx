@@ -12,7 +12,7 @@ import {
   fetchInstituciones,
   addInstitucion,
   deleteInstitucion,
-  updateInstitucion
+  updateInstitucion,
 } from "../services/Institucion.services";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,35 +21,39 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { InstitucionFormModal } from "./InstitucionFormModal";
 
 const buttonStyle: React.CSSProperties = {
-    fontSize: "20px",
-    fontWeight: "bold",
-    backgroundColor: "navy",
-    color: "white",
-    border: "0px",
-    marginInline: "25px",
-    margin: "2px", // Set margin
-    borderRadius: "5px",
-    padding: "2px 10px", // Set padding to match margin (adjust as needed)
-    textTransform: "none",
-  };
-  
-  const headerStyle: React.CSSProperties = {
-    fontWeight: "bold",
-    color: "navy",
-    fontSize: "15px",
-  };
-  
-  const wordLabelStyle: React.CSSProperties = {
-    fontWeight: "bold",
-    color: "navy",
-    fontSize: "25px",
-    marginTop: "20px",
-  };
+  fontSize: "20px",
+  fontWeight: "bold",
+  backgroundColor: "navy",
+  color: "white",
+  width: "300px",
+  border: "0px",
+  marginInline: "25px",
+  margin: "2px", // Set margin
+  borderRadius: "5px",
+  padding: "2px 10px", // Set padding to match margin (adjust as needed)
+  textTransform: "none",
+  marginBottom: "20px",
+};
+
+const headercellStyle: React.CSSProperties = {
+  backgroundColor: "#dfecff",
+  color: "navy",
+  fontSize: "15px",
+  height: "20px",
+  fontWeight: "bold",
+};
+const wordLabelStyle: React.CSSProperties = {
+  fontWeight: "bold",
+  color: "navy",
+  fontSize: "40px",
+  marginTop: "0px",
+};
 
 export const InstitucionTable: React.FC = () => {
   const [instituciones, setInstituciones] = useState<Institucion[]>([]);
   const [isAddingInstitucion, setIsAddingInstitucion] = useState(false);
-  const [editingInstitucion, setEditingInstitucion] = useState<Institucion | null>(null);
+  const [editingInstitucion, setEditingInstitucion] =
+    useState<Institucion | null>(null);
 
   useEffect(() => {
     const loadInstituciones = async () => {
@@ -57,7 +61,7 @@ export const InstitucionTable: React.FC = () => {
         const institucionesList = await fetchInstituciones();
         setInstituciones(institucionesList);
       } catch (error) {
-        console.error("Error fetching instituciones: ", error);
+        console.error("Error recopilando instituciones: ", error);
       }
     };
     loadInstituciones();
@@ -75,34 +79,38 @@ export const InstitucionTable: React.FC = () => {
   };
 
   const handleDeleteInstitucion = async (id: number) => {
-      try {
-        await deleteInstitucion(id);
-        const updatedInstitucion = await fetchInstituciones();
-        setInstituciones(updatedInstitucion);
-      } catch (error) {
-        console.error("Error borrando admin: ", error);
-      }
+    try {
+      await deleteInstitucion(id);
+      const updatedInstitucion = await fetchInstituciones();
+      setInstituciones(updatedInstitucion);
+    } catch (error) {
+      console.error("Error borrando admin: ", error);
+    }
   };
 
-  const handleEditInstitucion = async (institucion: Institucion): Promise<Institucion> => {
+  const handleEditInstitucion = async (
+    institucion: Institucion
+  ): Promise<Institucion> => {
     try {
-        const updatedInstitucion = await updateInstitucion(institucion);
-        
-        setInstituciones(prevInstituciones => {
-            return prevInstituciones.map(inst => 
-                inst.idinstitucion === updatedInstitucion.idinstitucion ? updatedInstitucion : inst
-            );
-        });
+      const updatedInstitucion = await updateInstitucion(institucion);
 
-        return updatedInstitucion;  // Devolver la institución actualizada
+      setInstituciones((prevInstituciones) => {
+        return prevInstituciones.map((inst) =>
+          inst.idinstitucion === updatedInstitucion.idinstitucion
+            ? updatedInstitucion
+            : inst
+        );
+      });
+
+      return updatedInstitucion; // Devolver la institución actualizada
     } catch (error) {
-        console.error("Error actualizando admin: ", error);
-        throw error;
+      console.error("Error actualizando admin: ", error);
+      throw error;
     }
-};
+  };
 
   return (
-    <div style={{ margin: "20px" }}>
+    <div>
       <h2 style={wordLabelStyle}>Instituciones</h2>
       <Button
         variant="contained"
@@ -110,7 +118,7 @@ export const InstitucionTable: React.FC = () => {
         onClick={() => setIsAddingInstitucion(true)}
         style={buttonStyle}
       >
-        Añadir Institucion
+        Añadir Institución
       </Button>
       <InstitucionFormModal
         isOpen={isAddingInstitucion}
@@ -129,21 +137,24 @@ export const InstitucionTable: React.FC = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell style={headerStyle}>Nombre Institucion</TableCell>
-            <TableCell style={headerStyle}>Acciones</TableCell>
+            <TableCell style={headercellStyle}>Nombre Institución</TableCell>
+            <TableCell style={headercellStyle}>Acciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {instituciones.map((institucion) => (
             <TableRow key={institucion.idinstitucion}>
-              <TableCell>{institucion.nombre_institucion}</TableCell> {/* Asumiendo que tiene una propiedad 'name' */}
+              <TableCell>{institucion.nombre_institucion}</TableCell>{" "}
+              {/* Asumiendo que tiene una propiedad 'name' */}
               <TableCell>
                 <EditIcon
                   onClick={() => setEditingInstitucion(institucion)}
                   style={{ cursor: "pointer", marginRight: "10px" }}
                 />
                 <DeleteIcon
-                  onClick={() => {handleDeleteInstitucion(institucion.idinstitucion!)}}
+                  onClick={() => {
+                    handleDeleteInstitucion(institucion.idinstitucion!);
+                  }}
                   style={{ cursor: "pointer" }}
                 />
               </TableCell>

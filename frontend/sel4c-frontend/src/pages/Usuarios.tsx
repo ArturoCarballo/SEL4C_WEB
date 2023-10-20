@@ -34,6 +34,8 @@ const whiteframeStyle: React.CSSProperties = {
   flex: 1,
   padding: "20px",
   justifyContent: "flex-end", // Align children to the right
+  minWidth: "1000px",
+  maxWidth: "100%",
 };
 
 const tabbuttonStyle: React.CSSProperties = {
@@ -89,15 +91,16 @@ const Usuarios: React.FC = () => {
       <div style={whiteframeStyle}>
         <div style={tabbuttonStyle}>
           <ButtonGroup variant="outlined" size="medium">
+            <Button style={buttonStyle} onClick={() => setActiveTab("tabla")}>
+              Usuarios
+            </Button>
             <Button
               style={buttonStyle}
               onClick={() => setActiveTab("diagnostico")}
             >
               Diagnósticos
             </Button>
-            <Button style={buttonStyle} onClick={() => setActiveTab("tabla")}>
-              Tablas
-            </Button>
+
             <Button
               style={buttonStyle}
               onClick={() => setActiveTab("Actividades")}
@@ -112,7 +115,7 @@ const Usuarios: React.FC = () => {
           ) : activeTab === "diagnostico" ? (
             <Diagnostico filters={filters} setFilters={setFilters} />
           ) : activeTab === "Actividades" ? (
-            <Actividades filters={filters} setFilters={setFilters}/>
+            <Actividades filters={filters} setFilters={setFilters} />
           ) : null}
         </div>
       </div>

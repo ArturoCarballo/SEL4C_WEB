@@ -23,10 +23,43 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LogoutButton from "./LogoutButton";
 
+const backgroundframeStyle: React.CSSProperties = {
+  background: "linear-gradient(to bottom, #061e61, #92b9f7)",
+  flex: 1,
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  padding: "0px",
+  paddingTop: "1px",
+  minHeight: "800px",
+  maxHeight: "100%",
+};
+
+const whiteframeStyle: React.CSSProperties = {
+  background: "white",
+  display: "flex",
+  flexDirection: "column",
+  margin: "10px",
+  borderRadius: "10px",
+  flex: 1,
+  padding: "30px",
+  justifyContent: "flex-end",
+};
+
+const headercellStyle: React.CSSProperties = {
+  backgroundColor: "#dfecff",
+  color: "navy",
+  fontSize: "15px",
+  height: "20px",
+  fontWeight: "bold",
+};
+
 const buttonStyle: React.CSSProperties = {
   fontSize: "20px",
   fontWeight: "bold",
   backgroundColor: "navy",
+  width: "300px",
   color: "white",
   border: "0px",
   marginInline: "25px",
@@ -34,6 +67,7 @@ const buttonStyle: React.CSSProperties = {
   borderRadius: "5px",
   padding: "2px 10px", // Set padding to match margin (adjust as needed)
   textTransform: "none",
+  marginBottom: "20px",
 };
 
 const headerStyle: React.CSSProperties = {
@@ -45,8 +79,8 @@ const headerStyle: React.CSSProperties = {
 const wordLabelStyle: React.CSSProperties = {
   fontWeight: "bold",
   color: "navy",
-  fontSize: "25px",
-  marginTop: "20px",
+  fontSize: "40px",
+  marginTop: "0px",
 };
 
 export const AdminTable: React.FC = () => {
@@ -161,65 +195,71 @@ export const AdminTable: React.FC = () => {
   };
 
   return (
-    <div style={{ margin: "20px" }}>
-      <h2 style={wordLabelStyle}>Admins</h2>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setIsAddingAdmin(true)}
-        style={buttonStyle}
-      >
-        Añadir Admin
-      </Button>
-      <AdminFormModal
-        isOpen={isAddingAdmin}
-        onClose={() => setIsAddingAdmin(false)}
-        onSave={handleAddAdmin}
-      />
-
-      {editingAdmin && (
+    <div style={backgroundframeStyle}>
+      <div style={whiteframeStyle}>
+        <h2 style={wordLabelStyle}>Administradores</h2>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setIsAddingAdmin(true)}
+          style={buttonStyle}
+        >
+          Añadir Administrador
+        </Button>
         <AdminFormModal
-          isOpen={true}
-          onClose={() => setEditingAdmin(null)}
-          onSave={handleEditAdmin}
-          initialData={editingAdmin}
+          isOpen={isAddingAdmin}
+          onClose={() => setIsAddingAdmin(false)}
+          onSave={handleAddAdmin}
         />
-      )}
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>
-              <TableSortLabel
-                active={sortConfig?.key === "username"}
-                direction={sortConfig?.direction as "asc" | "desc" | undefined}
-                onClick={() => requestSort("username")}
-                style={headerStyle}
-              >
-                Username
-              </TableSortLabel>
-            </TableCell>
-            <TableCell style={headerStyle}>Acciones</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedAdmins.map((admin) => (
-            <TableRow key={admin.id}>
-              <TableCell>{admin.username}</TableCell>
-              <TableCell>
-                <EditIcon
-                  onClick={() => setEditingAdmin(admin)}
-                  style={{ cursor: "pointer", marginRight: "10px" }}
-                />
-                <DeleteIcon
-                  onClick={() => handleDeleteAdmin(admin.id!)}
-                  style={{ cursor: "pointer" }}
-                />
+
+        {editingAdmin && (
+          <AdminFormModal
+            isOpen={true}
+            onClose={() => setEditingAdmin(null)}
+            onSave={handleEditAdmin}
+            initialData={editingAdmin}
+          />
+        )}
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell style={headercellStyle}>
+                <TableSortLabel
+                  active={sortConfig?.key === "username"}
+                  direction={
+                    sortConfig?.direction as "asc" | "desc" | undefined
+                  }
+                  onClick={() => requestSort("username")}
+                  style={headerStyle}
+                >
+                  Username
+                </TableSortLabel>
               </TableCell>
+              <TableCell style={headercellStyle}>Acciones</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <InstitucionTable></InstitucionTable>
+          </TableHead>
+          <TableBody>
+            {sortedAdmins.map((admin) => (
+              <TableRow key={admin.id}>
+                <TableCell>{admin.username}</TableCell>
+                <TableCell>
+                  <EditIcon
+                    onClick={() => setEditingAdmin(admin)}
+                    style={{ cursor: "pointer", marginRight: "10px" }}
+                  />
+                  <DeleteIcon
+                    onClick={() => handleDeleteAdmin(admin.id!)}
+                    style={{ cursor: "pointer" }}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div style={whiteframeStyle}>
+        <InstitucionTable></InstitucionTable>
+      </div>
     </div>
   );
 };
