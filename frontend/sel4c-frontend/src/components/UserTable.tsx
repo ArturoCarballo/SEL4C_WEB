@@ -12,6 +12,7 @@ import {
   TableSortLabel,
   TablePagination,
   Button,
+  Typography,
 } from "@mui/material";
 import {
   fetchUsersWithFilters,
@@ -43,6 +44,15 @@ type FiltersType = {
   };
 };
 
+const modalStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  color: "navy",
+  fontSize: "25px",
+  fontWeight: "bold",
+};
+
 const verticalPaginationStyle: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
@@ -56,16 +66,26 @@ const buttonStyle: React.CSSProperties = {
   color: "white",
   border: "0px",
   marginInline: "25px",
-  margin: "2px", // Set margin
+  margin: "2px",
   borderRadius: "5px",
-  padding: "2px 10px", // Set padding to match margin (adjust as needed)
+  padding: "2px 10px",
   textTransform: "none",
+  marginBottom: "15px",
 };
 
 const headerStyle: React.CSSProperties = {
   fontWeight: "bold",
   color: "navy",
   fontSize: "15px",
+  height: "20px",
+};
+
+const headercellStyle: React.CSSProperties = {
+  backgroundColor: "#dfecff",
+  color: "navy",
+  fontSize: "15px",
+  height: "20px",
+  fontWeight: "bold",
 };
 
 const titleStyle: React.CSSProperties = {
@@ -78,7 +98,10 @@ const titleStyle: React.CSSProperties = {
 
 const rowStyle: React.CSSProperties = {
   fontSize: "15px",
-  overflow: "nowrap",
+  whiteSpace: "nowrap",
+  maxWidth: "75px",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
 };
 
 interface UserTableProps {
@@ -209,10 +232,24 @@ export const UserTable: React.FC<UserTableProps> = ({
         <Button style={buttonStyle} onClick={() => setIsAddingUser(true)}>
           Añadir Usuario
         </Button>
+        <TablePagination
+          component="div"
+          count={sortedUsers.length}
+          page={page}
+          style={modalStyle}
+          onPageChange={(event, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(event) =>
+            setRowsPerPage(parseInt(event.target.value, 10))
+          }
+          labelRowsPerPage="Usuarios por página:"
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          sx={verticalPaginationStyle}
+        />
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>
+              <TableCell style={headercellStyle}>
                 <TableSortLabel
                   style={headerStyle}
                   active={sortConfig?.key === "nombre"}
@@ -225,7 +262,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>
+              <TableCell style={headercellStyle}>
                 <TableSortLabel
                   style={headerStyle}
                   active={sortConfig?.key === "apellido"}
@@ -238,7 +275,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>
+              <TableCell style={headercellStyle}>
                 <TableSortLabel
                   style={headerStyle}
                   active={sortConfig?.key === "email"}
@@ -251,7 +288,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>
+              <TableCell style={headercellStyle}>
                 <TableSortLabel
                   style={headerStyle}
                   active={sortConfig?.key === "edad"}
@@ -264,7 +301,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>
+              <TableCell style={headercellStyle}>
                 <TableSortLabel
                   style={headerStyle}
                   active={sortConfig?.key === "sexo"}
@@ -277,7 +314,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>
+              <TableCell style={headercellStyle}>
                 <TableSortLabel
                   style={headerStyle}
                   active={sortConfig?.key === "disciplina"}
@@ -290,7 +327,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>
+              <TableCell style={headercellStyle}>
                 <TableSortLabel
                   style={headerStyle}
                   active={sortConfig?.key === "grado_academico"}
@@ -303,7 +340,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>
+              <TableCell style={headercellStyle}>
                 <TableSortLabel
                   style={headerStyle}
                   active={sortConfig?.key === "nombre_institucion"}
@@ -316,7 +353,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                 </TableSortLabel>
               </TableCell>
 
-              <TableCell>
+              <TableCell style={headercellStyle}>
                 <TableSortLabel
                   style={headerStyle}
                   active={sortConfig?.key === "nombre_pais"}
@@ -328,7 +365,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                   País
                 </TableSortLabel>
               </TableCell>
-              <TableCell style={headerStyle}>Acciones</TableCell>
+              <TableCell style={headercellStyle}>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -364,19 +401,6 @@ export const UserTable: React.FC<UserTableProps> = ({
             ))}
           </TableBody>
         </Table>
-        <TablePagination
-          component="div"
-          count={sortedUsers.length}
-          page={page}
-          style={headerStyle}
-          onPageChange={(event, newPage) => setPage(newPage)}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={(event) =>
-            setRowsPerPage(parseInt(event.target.value, 10))
-          }
-          labelRowsPerPage="Usuarios por página:"
-          sx={verticalPaginationStyle}
-        />
 
         <UserFormModal
           isOpen={isAddingUser}
