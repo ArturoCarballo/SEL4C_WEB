@@ -185,9 +185,31 @@ app.post('/verify-email', async (req, res) => {
   if (rows.length && rows[0].code === code) {
       await pool.execute('UPDATE usuario SET is_verified = 1 WHERE email = ?', [email]);
       console.log("Si se pudo");
-      res.send('Email verified successfully!');
+      // Genera un token JWT
+      const token = jwt.sign({ id: email }, process.env.SECRET_KEY, {
+        expiresIn: 86400 // 24 horas
+      });
+      res.json({token: token});
   } else {
       res.send('Invalid verification code.');
+  }
+});
+
+// Endpoint para cambiar contraseña
+app.put('cambiar-contra', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+  const { password } = req.body;
+
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+  try {
+    await pool.execute(
+      'UPDATE usuario SET password = ? WHERE id = ?',
+      [hashedPassword, id]
+    );
+
+    res.status(200).json({ message: "Se cambio la contraseña" })
+  } catch (error) {
+    next(error);
   }
 });
 
