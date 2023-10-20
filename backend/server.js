@@ -189,7 +189,7 @@ app.post('/verify-email', async (req, res) => {
       });
       res.json({token: token});
   } else {
-      res.send('Invalid verification code.');
+    res.status(500).json({ message: 'Failed to verify email' });
   }
 });
 
