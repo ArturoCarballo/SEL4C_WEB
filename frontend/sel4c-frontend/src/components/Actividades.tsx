@@ -1,9 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Box } from "@mui/material";
 import LinearProgress, {
   LinearProgressProps,
 } from "@mui/material/LinearProgress";
 import { act } from "@testing-library/react";
+import { fetchUsersWithFilters } from "../services/User.services";
+
+type FiltersType = {
+  nombre_pais: string;
+  disciplina: string;
+  grado_academico: string;
+  nombre_institucion: string;
+  minEdad: number;
+  maxEdad: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  sexo: {
+    Masculino: boolean;
+    Femenino: boolean;
+    "No binario": boolean;
+    "Prefiero no decir": boolean;
+  };
+};
+
+interface ActividadesProps {
+  filters: FiltersType;
+  setFilters: React.Dispatch<React.SetStateAction<FiltersType>>;
+}
 
 const titleStyle: React.CSSProperties = {
   fontWeight: "bold",
@@ -38,20 +62,62 @@ const activityStyle: React.CSSProperties = {
   fontSize: "15px",
 };
 
-const activitiesData: { name: string; progress: number }[] = [
-  { name: "Actividad 1", progress: 100 }, //ya en porcentaje
-  { name: "Actividad 2", progress: 80 },
-  { name: "Actividad 3", progress: 60 },
-  { name: "Actividad 4", progress: 40 },
-  { name: "Entrega final", progress: 20 },
-];
-
 const progressStyle: React.CSSProperties = {
   width: "200px",
   marginTop: "35px",
 };
 
-const Actividades: React.FC = () => {
+const activityProgressMapping = {
+  "Actividad 1": { min: 1, max: 4 },
+  "Actividad 2": { min: 5, max: 7 },
+  "Actividad 3": { min: 8, max: 10 },
+  "Actividad 4": { min: 11, max: 12 },
+  "Entrega final": { min: 13, max: 15 },
+};
+
+const calculateGeneralProgress = (usersProgress: number[]): { name: string; progress: number }[] => {
+  let activitiesProgress = [];
+
+  for (let activity in activityProgressMapping) {
+    let range = activityProgressMapping[activity as keyof typeof activityProgressMapping];
+    let totalUsersInActivityRange = usersProgress.filter(p => p >= range.min && p <= range.max).length;
+
+    // Aquí, puedes adaptar la fórmula de cálculo según tu lógica de negocio
+    let progressPercentage = parseFloat(((totalUsersInActivityRange / usersProgress.length) * 100).toFixed(2));
+    activitiesProgress.push({ name: activity, progress: progressPercentage });
+  }
+
+  return activitiesProgress;
+};
+
+export const fetchGeneralActivityProgress = async (filters: any): Promise<{ name: string; progress: number }[]> => {
+  // Obtener todos los usuarios con filtros
+  const users = await fetchUsersWithFilters(filters);
+
+  // Extraer solo la columna 'progreso' de cada usuario
+  const usersProgress = users.map(user => user.progreso);
+
+  // Calcular el progreso general con la función que se definió anteriormente
+  const activitiesData = calculateGeneralProgress(usersProgress);
+
+  return activitiesData;
+}
+
+
+const Actividades: React.FC<ActividadesProps> = ({ filters, setFilters }) => {
+  const [activitiesData, setActivitiesData] = useState<{ name: string; progress: number }[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchGeneralActivityProgress(filters);
+        setActivitiesData(data);
+      } catch (error) {
+        console.error("Error fetching preguntas: ", error);
+      }
+    };
+    fetchData();
+  }, [filters]);
   return (
     <div>
       <h2 style={titleStyle}>Actividades</h2>

@@ -120,7 +120,6 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ filters, setFilters }) => {
           <h1 style={wordLabelStyle}>Final</h1>
         </div>
       </div>
-      {/* Otros componentes o elementos que quieras renderizar */}
     </div>
   );
 };

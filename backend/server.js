@@ -103,8 +103,32 @@ const generateVerificationCode = () => {
 };
 
 async function storeVerificationCode(email, code) {
-  const [rows] = await pool.execute('INSERT INTO verification_code (email, code) VALUES (?, ?)', [email, code]);
-  return rows;
+  try {
+    // Verifica si el email ya existe en la tabla 'usuario'
+    const [userRows] = await pool.execute('SELECT id FROM usuario WHERE email = ?', [email]);
+
+    // Si no hay ningún usuario con ese email, regresa un mensaje de error
+    if (userRows.length === 0) {
+      return userId;
+    }
+
+    const userId = userRows[0].id;
+
+    // Si el email existe en la tabla 'usuario', inserta o actualiza el código en 'verification_code'
+    const query = `
+      INSERT INTO verification_code (email, code)
+      VALUES (?, ?)
+      ON DUPLICATE KEY UPDATE code = ?
+    `;
+
+    await pool.execute(query, [email, code, code]);
+
+    // Regresa el ID del usuario
+    return userId;
+  } catch (error) {
+    console.error('Error storing verification code:', error.message);
+    return userId;
+  }
 }
 
 
@@ -146,11 +170,11 @@ app.post('/register', async (req, res) => {
   
   const code = generateVerificationCode();
   
-  await storeVerificationCode(email, code);
+  const userId = await storeVerificationCode(email, code);
 
   await sendVerificationEmailWithCode(email, `Your verification code is: ${code}`);
   
-  res.send('Registration successful! Please verify your email.');
+  res.json({ message: 'Registration successful! Please verify your email.', userId });
 });
 
 app.post('/verify-email', async (req, res) => {
@@ -158,10 +182,32 @@ app.post('/verify-email', async (req, res) => {
 
   const [rows] = await pool.execute('SELECT code FROM verification_code WHERE email = ?', [email]);
   if (rows.length && rows[0].code === code) {
-      await pool.execute('UPDATE users SET is_verified = 1 WHERE email = ?', [email]);
-      res.send('Email verified successfully!');
+      await pool.execute('UPDATE usuario SET is_verified = 1 WHERE email = ?', [email]);
+      // Genera un token JWT
+      const token = jwt.sign({ id: email }, process.env.SECRET_KEY, {
+        expiresIn: 86400 // 24 horas
+      });
+      res.json({token: token});
   } else {
-      res.send('Invalid verification code.');
+    res.status(500).json({ message: 'Failed to verify email' });
+  }
+});
+
+// Endpoint para cambiar contraseña
+app.put('/cambiar-contra/:id', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+  const { password } = req.body;
+
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
+  try {
+    await pool.execute(
+      'UPDATE usuario SET password = ? WHERE id = ?',
+      [hashedPassword, id]
+    );
+
+    res.status(200).json({ message: "Se cambio la contraseña" })
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -499,11 +545,66 @@ app.put('/api/admins/:id', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Endpoint para obtener todos los admins
+// Endpoint para eliminar un admin
+app.delete('/api/admins/:id', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    await pool.execute('DELETE FROM admin WHERE id = ?', [id]);
+    res.status(200).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para obtener todos las instituciones
 app.get('/api/instituciones', async (req, res, next) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM institucion');
     res.json(rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para poner una institucion
+app.post('/api/instituciones', async (req, res, next) => {
+  const { nombre_institucion } = req.body;
+
+  try {
+    const [result] = await pool.execute('INSERT INTO institucion (nombre_institucion) VALUES (?)', [nombre_institucion]);
+    res.status(201).json({ id: result.insertId });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para eliminar una institucion
+app.delete('/api/instituciones/:id', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    await pool.execute('DELETE FROM institucion WHERE idinstitucion = ?', [id]);
+    res.status(200).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Endpoint para actualizar una institucion
+app.put('/api/instituciones/:id', authMiddleware, async (req, res, next) => {
+  const { id } = req.params;
+  const { nombre_institucion } = req.body;
+
+  try {
+    await pool.execute(
+      'UPDATE institucion SET nombre_institucion = ? WHERE idinstitucion = ?',
+      [nombre_institucion, id]
+    );
+
+    const [rows] = await pool.execute('SELECT * FROM institucion WHERE idinstitucion = ?', [id]);
+    const updatedUser = rows[0];
+    res.status(200).json(updatedUser)
   } catch (error) {
     next(error);
   }

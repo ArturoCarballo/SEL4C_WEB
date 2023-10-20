@@ -12,5 +12,6 @@ export interface User {
     password: string;
     nombre_institucion: string;
     nombre_pais: string;
+    progreso: number;
   }
   

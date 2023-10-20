@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Admin } from "../interface/Admin";
 import { AdminFormModal } from "./AdminFormModal";
+import { InstitucionTable } from "./InstitucionTable";
 
 import {
   Table,
@@ -218,6 +219,7 @@ export const AdminTable: React.FC = () => {
           ))}
         </TableBody>
       </Table>
+      <InstitucionTable></InstitucionTable>
     </div>
   );
 };
