@@ -94,6 +94,7 @@ const titleStyle: React.CSSProperties = {
   fontSize: "40px",
   overflow: "nowrap",
   marginInline: "20px",
+  
 };
 
 const rowStyle: React.CSSProperties = {
@@ -102,6 +103,7 @@ const rowStyle: React.CSSProperties = {
   maxWidth: "75px",
   overflow: "hidden",
   textOverflow: "ellipsis",
+
 };
 
 interface UserTableProps {
