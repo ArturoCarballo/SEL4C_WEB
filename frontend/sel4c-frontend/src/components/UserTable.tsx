@@ -249,7 +249,7 @@ export const UserTable: React.FC<UserTableProps> = ({
   };
 
   return (
-    <div style={{ width: "500px" }}>
+    <div style={{ width: "1500px" }}>
       <div style={{ flex: 1, marginRight: "20px" }}></div>
       <div style={{ flex: 2 }}>
         <h2 style={titleStyle}>Usuarios</h2>
