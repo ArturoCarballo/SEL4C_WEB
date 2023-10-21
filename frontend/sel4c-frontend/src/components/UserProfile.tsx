@@ -59,10 +59,10 @@ const UserProfile: React.FC = () => {
             <h2>Perfil de {user.nombre} {user.apellido}</h2>
             <p>Email: {user.email}</p>
             <button style={buttonStyle} onClick={() => downloadAsPNG(chartRef1, "CompetenciasChart1.png")}>
-                Descargar CompetenciasChart 1 como PNG
+                Descargar Competencias 1
             </button>
             <button style={buttonStyle} onClick={() => downloadAsPNG(chartRef2, "CompetenciasChart2.png")}>
-                Descargar CompetenciasChart 2 como PNG
+                Descargar Competencias 2
             </button>
             <div className="answers-container">
                 <UserAnswers id={user.id || 0} idcuestionario = {1} />
